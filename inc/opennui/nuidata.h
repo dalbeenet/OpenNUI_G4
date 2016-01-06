@@ -56,7 +56,7 @@ public:
 
 namespace image {
 
-struct header_field
+struct image_format
 {
 public:
     uint32_t width = 0;
@@ -79,7 +79,8 @@ public:
 
 struct data_frame
 {
-    header_field header_field;
+    using header_field = image_format;
+    header_field header;
     opennui_readonly_buffer data;
 };
 
@@ -125,13 +126,14 @@ struct body_joint: public joint
     joint_type type = joint_type::null;
 };
 
-struct body_unit
+struct nuibody
 {
+    bool     is_valid = false;
     uint32_t id = 0;
     ::std::array<body_joint, (const int32_t)joint_type::number_of_joints> joints;
 };
 
-struct header_field
+struct tracking_info
 {
     uint32_t maximum_tracking_bodies = 0;
     uint32_t current_tracking_bodies = 0;
@@ -140,12 +142,13 @@ struct header_field
 
 struct data_frame
 {
+    using header_field = tracking_info;
     header_field header;
     opennui_readonly_buffer raw_data;
-    inline const body_unit& get_body_unit(uint32_t index)
+    inline const nuibody& get_body_unit(uint32_t id)
     {
-        uint32_t offset = sizeof(body_unit) * index;
-        return *reinterpret_cast<const body_unit*>(const_cast<unsigned char*>(raw_data.get()) + offset);
+        uint32_t offset = sizeof(nuibody) * id;
+        return *reinterpret_cast<const nuibody*>(const_cast<unsigned char*>(raw_data.get()) + offset);
     }
 };
 
@@ -189,18 +192,44 @@ enum class hand_state: int32_t
     point,
 };
 
-class hand_unit
+enum class hand_type: int32_t
 {
-    bool is_left;
-    hand_state state;    
+    unknown = 0,
+    left,
+    right,
 };
 
-class header_field
+class nuihand
+{
+    bool      is_valid = false;
+    uint32_t  id = 0;
+    hand_type is_left = hand_type::unknown;
+    hand_state state = hand_state::unknown; 
+};
+
+class tracking_info
 {
 public:
     uint32_t maximum_tracking_joints;
     uint32_t current_tracking_joints;
     uint32_t number_of_joints;
+};
+
+struct data_frame
+{
+    using header_field = tracking_info;
+    header_field header;
+    opennui_readonly_buffer raw_data;
+    inline const nuihand& get_left_hand(uint32_t id)
+    {
+        uint32_t offset = sizeof(nuihand) * id;
+        return *reinterpret_cast<const nuihand*>(const_cast<unsigned char*>(raw_data.get()) + offset);
+    }
+    inline const nuihand& get_right_hand(uint32_t id)
+    {
+        uint32_t offset = sizeof(nuihand) * (id + 1);
+        return *reinterpret_cast<const nuihand*>(const_cast<unsigned char*>(raw_data.get()) + offset);
+    }
 };
 
 } // !namespace hand
@@ -211,8 +240,8 @@ namespace face {
 
 } // !namespace tracking
 
-using nuibody = tracking::body::body_unit;
-using nuihand = tracking::hand::hand_unit;
+using nuibody = tracking::body::nuibody;
+using nuihand = tracking::hand::nuihand;
 
 } // !namespae nuidata
 

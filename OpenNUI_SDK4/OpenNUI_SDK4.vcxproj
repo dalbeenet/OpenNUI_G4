@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\inc\opennui\nuidata.h" />
+    <ClInclude Include="..\inc\opennui\nuidevice.h" />
     <ClInclude Include="..\inc\opennui\opennui.h" />
     <ClInclude Include="..\inc\opennui\version.h" />
   </ItemGroup>

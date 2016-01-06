@@ -2,6 +2,7 @@
 #define _OPENNUI_OPENNUI_H_
 
 #include <opennui/version.h>
+#include <opennui/nuidata.h>
 
 namespace opennui {
 

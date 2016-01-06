@@ -18,6 +18,9 @@
     <ClInclude Include="..\inc\opennui\version.h">
       <Filter>opennui</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\opennui\nuidevice.h">
+      <Filter>opennui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sdk4.cpp" />
