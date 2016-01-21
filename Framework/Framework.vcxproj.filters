@@ -3,4 +3,9 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Module">
+      <UniqueIdentifier>{5fa13d7a-fd9f-4c18-a197-4fd5392bc584}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
 </Project>
