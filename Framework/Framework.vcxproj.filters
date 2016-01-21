@@ -2,10 +2,30 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="system\exceptions_impl.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="system\virtual_device_impl.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Module">
+    <Filter Include="System">
       <UniqueIdentifier>{5fa13d7a-fd9f-4c18-a197-4fd5392bc584}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="system\device_manager.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="system\datatypes.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="system\virutual_device.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="system\exception.h">
+      <Filter>System</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

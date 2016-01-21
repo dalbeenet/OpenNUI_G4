@@ -77,7 +77,6 @@ class opennui_plugin abstract
     virtual void get_depth_frame_format(::opennui::nuidata::image::image_format& out) const override;\
     virtual void get_body_tracking_info(::opennui::nuidata::tracking::body::tracking_info) const override;\
     virtual void get_hand_tracking_info(::opennui::nuidata::tracking::hand::tracking_info) const override;\
-    //virtual void get_face_tracking_info() const override;
     virtual bool acquire_color_frame(unsigned char* const out) override;\
     virtual bool acquire_depth_frame(unsigned char* const out) override;\
     virtual bool acquire_body_frame(unsigned char* const out) override;\

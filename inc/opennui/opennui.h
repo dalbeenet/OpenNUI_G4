@@ -3,6 +3,7 @@
 
 #include <opennui/version.h>
 #include <opennui/nuidata.h>
+#include <opennui/nuidevice.h>
 
 namespace opennui {
 

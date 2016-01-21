@@ -43,15 +43,15 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\x32\</OutDir>
     <IntDir>$(SolutionDir)\obj\x32\Debug\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)\inc;$(BOOST_1_59_0);$(VEE_2_0);$(IncludePath)</IncludePath>
-    <LibraryPath>$(BOOST_1_59_0)\stage32_lib;$(VEE_2_0_LIB)\x32;$(SolutionDir)\lib\x32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\inc;$(BOOST_1_59_0);$(VEE_2_0);$(ProjectDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(BOOST_1_59_0)\stage32_lib;$(SolutionDir)\lib\x32;$(VEE_2_0)\lib\x32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\x32\</OutDir>
     <IntDir>$(SolutionDir)\obj\x32\Release\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)\inc;$(BOOST_1_59_0);$(VEE_2_0);$(IncludePath)</IncludePath>
-    <LibraryPath>$(BOOST_1_59_0)\stage32_lib;$(VEE_2_0_LIB)\x32;$(SolutionDir)\lib\x32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\inc;$(BOOST_1_59_0);$(VEE_2_0);$(ProjectDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(BOOST_1_59_0)\stage32_lib;$(SolutionDir)\lib\x32;$(VEE_2_0)\lib\x32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -87,6 +87,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="system\exceptions_impl.cpp" />
+    <ClCompile Include="system\virtual_device_impl.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="system\device_manager.h" />
+    <ClInclude Include="system\datatypes.h" />
+    <ClInclude Include="system\exception.h" />
+    <ClInclude Include="system\virutual_device.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
