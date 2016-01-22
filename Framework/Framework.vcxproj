@@ -87,13 +87,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="system\exceptions_impl.cpp" />
-    <ClCompile Include="system\virtual_device_impl.cpp" />
+    <ClCompile Include="system\exceptions.cpp" />
+    <ClCompile Include="system\logger.cpp" />
+    <ClCompile Include="system\virtual_device.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="system\device_manager.h" />
-    <ClInclude Include="system\datatypes.h" />
-    <ClInclude Include="system\exception.h" />
+    <ClInclude Include="system\exceptions.h" />
+    <ClInclude Include="system\logger.h" />
+    <ClInclude Include="system\sysbase.h" />
     <ClInclude Include="system\virutual_device.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,30 +2,36 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="system\exceptions_impl.cpp">
-      <Filter>System</Filter>
+    <ClCompile Include="system\virtual_device.cpp">
+      <Filter>system</Filter>
     </ClCompile>
-    <ClCompile Include="system\virtual_device_impl.cpp">
-      <Filter>System</Filter>
+    <ClCompile Include="system\exceptions.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="system\logger.cpp">
+      <Filter>system</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="System">
+    <Filter Include="system">
       <UniqueIdentifier>{5fa13d7a-fd9f-4c18-a197-4fd5392bc584}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="system\device_manager.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="system\datatypes.h">
-      <Filter>System</Filter>
-    </ClInclude>
     <ClInclude Include="system\virutual_device.h">
-      <Filter>System</Filter>
+      <Filter>system</Filter>
     </ClInclude>
-    <ClInclude Include="system\exception.h">
-      <Filter>System</Filter>
+    <ClInclude Include="system\device_manager.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="system\exceptions.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="system\logger.h">
+      <Filter>system</Filter>
+    </ClInclude>
+    <ClInclude Include="system\sysbase.h">
+      <Filter>system</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
