@@ -12,7 +12,7 @@ void logger::system_log(const char* format, ...)
     buffer.fill(0);
     va_list ap;
     va_start(ap, format);
-    vsprintf(buffer.data(), format, ap);
+    vsprintf_s(buffer.data(), buffer.size(), format, ap);
     printf("log> %s\n", buffer.data());
     va_end(ap);
 }
@@ -28,7 +28,7 @@ void logger::system_error_log(const char* format, ...)
     buffer.fill(0);
     va_list ap;
     va_start(ap, format);
-    vsprintf(buffer.data(), format, ap);
+    vsprintf_s(buffer.data(), buffer.size(), format, ap);
     printf("err> %s\n", buffer.data());
     va_end(ap);
 }

@@ -11,6 +11,9 @@
     <ClCompile Include="system\logger.cpp">
       <Filter>system</Filter>
     </ClCompile>
+    <ClCompile Include="device_management.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="system">

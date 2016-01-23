@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Framework", "Framework\Fram
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenNUI_SDK4", "OpenNUI_SDK4\OpenNUI_SDK4.vcxproj", "{E00054F2-E390-4E5B-86FF-2B102E75879E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenNUI_Kinect2", "OpenNUI_Kinect2\OpenNUI_Kinect2.vcxproj", "{C76F75B0-B44A-42B4-9C31-4837E4A3C6AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -24,6 +26,10 @@ Global
 		{E00054F2-E390-4E5B-86FF-2B102E75879E}.Debug|Win32.Build.0 = Debug|Win32
 		{E00054F2-E390-4E5B-86FF-2B102E75879E}.Release|Win32.ActiveCfg = Release|Win32
 		{E00054F2-E390-4E5B-86FF-2B102E75879E}.Release|Win32.Build.0 = Release|Win32
+		{C76F75B0-B44A-42B4-9C31-4837E4A3C6AE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C76F75B0-B44A-42B4-9C31-4837E4A3C6AE}.Debug|Win32.Build.0 = Debug|Win32
+		{C76F75B0-B44A-42B4-9C31-4837E4A3C6AE}.Release|Win32.ActiveCfg = Release|Win32
+		{C76F75B0-B44A-42B4-9C31-4837E4A3C6AE}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

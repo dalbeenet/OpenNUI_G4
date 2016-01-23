@@ -64,7 +64,7 @@ class opennui_plugin abstract
 
 #define DEFINE_OPENNUI_DEVICE(class_name) public:\
     virtual ~##class_name();\
-    virtual bool open() = override;\
+    virtual bool open() override;\
     virtual bool suspend() override;\
     virtual bool release() override;\
     virtual ::opennui::device_state state() const override;\

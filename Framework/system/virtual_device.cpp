@@ -35,7 +35,7 @@ _body_tracking_info(::std::move(_body_tracking_info))
 
 virtual_device& virtual_device::operator=(virtual_device&& other)
 {
-
+    return *this;
 }
 
 void virtual_device::_open(const char* module_path) throw(...)
@@ -79,10 +79,11 @@ void virtual_device::_close() __noexcept
 {
 #if OPENNUI_PLATFORM_WINDOWS
     if (_native != NULL)
-        FreeLibrary(_native);
-    if (GetLastError() != 0)
     {
-        logger::system_error_log("FreeLibrary() failed in %s (gle: %d)", __FUNCTION__, GetLastError());
+        if (FreeLibrary(_native) == 0)
+        {
+            logger::system_error_log("FreeLibrary() failed in %s (gle: %d)", __FUNCTION__, GetLastError());
+        }
     }
 #endif
 }

@@ -12,7 +12,7 @@
 #if 0 && (_MSC_VER > 1000)
 #define DECLARE_HANDLE(name) struct name##__; typedef struct name##__ *name
 #else
-#define DECLARE_HANDLE(name) struct name##__{int unused;}; typedef struct name##__ *name
+#define DECLARE_HANDLE(name) struct name##__; typedef struct name##__ *name
 #endif
 DECLARE_HANDLE(HINSTANCE);
 typedef HINSTANCE HMODULE;      /* HMODULEs can be used in place of HINSTANCEs */

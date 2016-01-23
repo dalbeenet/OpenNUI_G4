@@ -11,19 +11,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{84454754-1A62-47CB-A55C-832DD43EEABD}</ProjectGuid>
+    <ProjectGuid>{C76F75B0-B44A-42B4-9C31-4837E4A3C6AE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Framework</RootNamespace>
+    <RootNamespace>OpenNUI_Kinect2</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -41,17 +41,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)\bin\x32\</OutDir>
+    <OutDir>$(SolutionDir)\bin\x32\modules\</OutDir>
     <IntDir>$(SolutionDir)\obj\x32\Debug\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)\inc;$(BOOST_1_59_0);$(VEE_2_0);$(ProjectDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(BOOST_1_59_0)\stage32_lib;$(SolutionDir)\lib\x32;$(VEE_2_0)\lib\x32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\lib\x32;$(LibraryPath)</LibraryPath>
+    <TargetExt>.nuidevice</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)\bin\x32\</OutDir>
+    <OutDir>$(SolutionDir)\bin\x32\modules\</OutDir>
     <IntDir>$(SolutionDir)\obj\x32\Release\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)\inc;$(BOOST_1_59_0);$(VEE_2_0);$(ProjectDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(BOOST_1_59_0)\stage32_lib;$(SolutionDir)\lib\x32;$(VEE_2_0)\lib\x32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\lib\x32;$(LibraryPath)</LibraryPath>
+    <TargetExt>.nuidevice</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -59,13 +61,13 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;OPENNUI_KINECT2_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libboost_system-vc120-mt-sgd-1_59.lib;vee2.0-vc120-sgd-2_0.lib;OpenNUI_SDK4_sgd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenNUI_SDK4_sgd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>opennui_exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -76,30 +78,19 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OPENNUI_KINECT2_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>libboost_system-vc120-mt-s-1_59.lib;vee2.0-vc120-s-2_0.lib;OpenNUI_SDK4_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenNUI_SDK4_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>opennui_exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="device_management.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="system\exceptions.cpp" />
-    <ClCompile Include="system\logger.cpp" />
-    <ClCompile Include="system\virtual_device.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="system\device_manager.h" />
-    <ClInclude Include="system\exceptions.h" />
-    <ClInclude Include="system\logger.h" />
-    <ClInclude Include="system\sysbase.h" />
-    <ClInclude Include="system\virutual_device.h" />
+    <ClCompile Include="OpenNUI_Kinect2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

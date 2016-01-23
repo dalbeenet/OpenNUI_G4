@@ -51,7 +51,7 @@ public:
         return _desc;
     }
     int  gle;
-}
+};
 
 } // !namespace exceptions
 
