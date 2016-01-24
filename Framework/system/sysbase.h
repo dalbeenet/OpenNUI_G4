@@ -31,9 +31,9 @@
 
 namespace opennui {
 
-namespace system {
+namespace sys {
 
-} // !namespace system
+} // !namespace sys
 
 } // !namespace opennui
 

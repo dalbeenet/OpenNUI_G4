@@ -3,7 +3,7 @@
 
 namespace opennui {
 
-namespace system {
+namespace sys {
 
 namespace exceptions {
 
@@ -22,6 +22,6 @@ gle(_gle)
 
 } // !namespace exceptions
 
-} // !namespace system
+} // !namespace sys
 
 } // !namespce opennui

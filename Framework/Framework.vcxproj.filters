@@ -14,10 +14,14 @@
     <ClCompile Include="device_management.cpp">
       <Filter>system</Filter>
     </ClCompile>
+    <ClCompile Include="system\comm\gateway.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="system">
       <UniqueIdentifier>{5fa13d7a-fd9f-4c18-a197-4fd5392bc584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="system\comm">
+      <UniqueIdentifier>{7785f68d-3783-47b6-8a32-9b2061b4eb4c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,5 +40,9 @@
     <ClInclude Include="system\sysbase.h">
       <Filter>system</Filter>
     </ClInclude>
+    <ClInclude Include="system\comm\gateway.h">
+      <Filter>system\comm</Filter>
+    </ClInclude>
+    <ClInclude Include="system\comm\protocol.h" />
   </ItemGroup>
 </Project>

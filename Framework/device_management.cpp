@@ -3,7 +3,7 @@
 
 namespace opennui {
 
-namespace system {
+namespace sys {
 
 #pragma region implementation of device_loader class
 ::std::vector<::std::string> device_loader::scan()
@@ -25,7 +25,7 @@ namespace system {
     ::std::vector<virtual_device::shared_ptr> ret;
     try
     {
-        auto list_modules = opennui::system::device_loader::scan();
+        auto list_modules = opennui::sys::device_loader::scan();
         for (auto& module_path : list_modules)
         {
             logger::system_log("load module \"%s\"", module_path.c_str());
@@ -54,6 +54,6 @@ device_manager& device_manager::_get_instance()
 }
 #pragma endregion !implementation of device_manager class
 
-} // !namespace system
+} // !namespace sys
 
 } // !namespace opennui

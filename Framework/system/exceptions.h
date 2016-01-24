@@ -5,7 +5,7 @@
 
 namespace opennui {
 
-namespace system {
+namespace sys {
 
 namespace exceptions {
 
@@ -55,7 +55,7 @@ public:
 
 } // !namespace exceptions
 
-} // !namespace system
+} // !namespace sys
 
 } // !namespace opennui
 

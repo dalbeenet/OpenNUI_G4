@@ -7,7 +7,7 @@ using namespace opennui;
 
 int main()
 {
-    namespace sys = ::opennui::system;
+    namespace sys = ::opennui::sys;
     sys::device_loader::create_all();
     //::std::this_thread::sleep_for(::std::chrono::milliseconds::duration(2000));
     return 0;

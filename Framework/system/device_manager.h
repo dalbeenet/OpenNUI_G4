@@ -6,7 +6,7 @@
 
 namespace opennui {
 
-namespace system {
+namespace sys {
 
 class device_loader
 {
@@ -28,7 +28,7 @@ private:
     device_manager() = default;
 };
 
-} // !namespace system
+} // !namespace sys
 
 } // !namespace opennui
 

@@ -21,7 +21,7 @@ typedef HINSTANCE HMODULE;      /* HMODULEs can be used in place of HINSTANCEs *
 
 namespace opennui {
 
-namespace system {
+namespace sys {
 
 class virtual_device
 {
@@ -81,7 +81,7 @@ private:
     nuidata::tracking::body::tracking_info _body_tracking_info;
 };
 
-} // !namespace system
+} // !namespace sys
 
 } // !namespace opennui
 

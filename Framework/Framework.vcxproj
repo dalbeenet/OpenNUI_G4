@@ -90,11 +90,14 @@
   <ItemGroup>
     <ClCompile Include="device_management.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="system\comm\gateway.cpp" />
     <ClCompile Include="system\exceptions.cpp" />
     <ClCompile Include="system\logger.cpp" />
     <ClCompile Include="system\virtual_device.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="system\comm\gateway.h" />
+    <ClInclude Include="system\comm\protocol.h" />
     <ClInclude Include="system\device_manager.h" />
     <ClInclude Include="system\exceptions.h" />
     <ClInclude Include="system\logger.h" />

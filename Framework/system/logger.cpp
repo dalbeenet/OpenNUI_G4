@@ -4,7 +4,7 @@
 
 namespace opennui {
 
-namespace system {
+namespace sys {
 
 void logger::system_log(const char* format, ...)
 {
@@ -38,6 +38,6 @@ void logger::system_error_log(std::string& s)
     printf("err> %s\n", s.c_str());
 }
 
-} // !namespace system
+} // !namespace sys
 
 } // !namespace opennui

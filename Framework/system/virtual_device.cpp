@@ -4,7 +4,7 @@
 
 namespace opennui {
 
-namespace system {
+namespace sys {
 
 virtual_device::virtual_device(const char* module_path) throw(...):
 _name(module_path)
@@ -88,6 +88,6 @@ void virtual_device::_close() __noexcept
 #endif
 }
 
-} // !namespace system
+} // !namespace sys
 
 } // !namespece opennui

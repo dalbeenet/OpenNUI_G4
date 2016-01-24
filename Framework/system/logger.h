@@ -5,7 +5,7 @@
 
 namespace opennui {
 
-namespace system {
+namespace sys {
 
 class logger abstract
 {
@@ -16,7 +16,7 @@ public:
     static void system_error_log(const char* format, ...);
 };
 
-} // !namespace system
+} // !namespace sys
 
 } // !namespace opennui
 
