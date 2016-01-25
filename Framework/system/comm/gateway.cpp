@@ -7,6 +7,15 @@ namespace sys {
 
 namespace comm {
 
+session::session(stream_t _stream, uint32_t _id):
+stream(_stream),
+state(state_t::init),
+id(_id),
+bytes_transferred(0)
+{
+    
+}
+
 gateway::~gateway()
 {
 
@@ -31,7 +40,7 @@ void gateway::_initialize()
         _native_server = net::tcp::create_server(protocol::comm_port::handshake_port);
         _web_server = net::rfc6455::create_server(protocol::comm_port::web_comm_port);
         _native_server->async_accept(_on_client_connected);
-        _web_server->async_accept(_on_web_client_connected);
+        _web_server->async_accept(_on_data_received);
     }
     catch (::vee::exception& e)
     {
@@ -44,24 +53,13 @@ void __stdcall gateway::_on_client_connected(::vee::net::op_result& operation_re
     if (operation_result.is_success)
     {
         logger::system_log("new client connected, start the handshake process soon!");
-        //TODO: Create session and call receive seq
+        session::shared_ptr s = ::std::make_shared<session>(stream, _generate_sid());
+        s->switching_state(session::state_t::read_header);
+        stream->async_read_some(s->buffer.data(), s->buffer.size(), ::std::bind(_on_data_received, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
     }
     else
     {
         logger::system_error_log("native server asynchronous connection failed!");
-    }
-}
-
-void __stdcall gateway::_on_web_client_connected(::vee::net::op_result& operation_result, ::vee::net::net_stream::shared_ptr stream)
-{
-    if (operation_result.is_success)
-    {
-        logger::system_log("new web client connected, start the handshake process soon!");
-        //TODO: Create session and call receive seq
-    }
-    else
-    {
-        logger::system_error_log("web server asynchronous connection failed!");
     }
 }
 
@@ -119,6 +117,12 @@ void __stdcall gateway::_on_data_received(session::shared_ptr session, ::vee::io
             }
         }
     }
+}
+
+uint32_t gateway::_generate_sid()
+{
+    static int sid = 100;
+    return sid++;
 }
 
 } // !namespace comm

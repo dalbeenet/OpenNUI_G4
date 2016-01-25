@@ -17,16 +17,12 @@ class session
 public:
     using shared_ptr = ::std::shared_ptr<session>;
     using unqiue_ptr = ::std::unique_ptr<session>;
+    using stream_t = ::vee::net::net_stream::shared_ptr;
     Enumeration(state_t, 0,
                 init,
                 read_header,
                 read_data);
-    using stream_t = ::vee::net::net_stream::shared_ptr;
-    stream_t stream {nullptr};
-    state_t  state = state_t::init;
-    uint32_t id;
-    protocol::message message;
-    size_t   bytes_transferred = 0;
+    session(stream_t _stream, uint32_t _id);
     inline void switching_state(state_t new_state)
     {
         state = new_state;
@@ -36,6 +32,16 @@ public:
         bytes_transferred = 0;
         message.clear();
     }
+
+public:
+    stream_t stream;
+    state_t  state;
+    uint32_t id;
+    protocol::message message;
+    size_t   bytes_transferred;
+    ::std::array<unsigned char, sizeof(message)> buffer;
+private:
+    session() = delete;
 };
 
 class gateway final
@@ -44,13 +50,12 @@ public:
     ~gateway();
     
 private:
-    
     static gateway& _get_instance();
     gateway();
     void _initialize();
     static void __stdcall _on_client_connected(::vee::net::op_result&/*operation result*/, ::vee::net::net_stream::shared_ptr/*stream*/);
-    static void __stdcall _on_web_client_connected(::vee::net::op_result&/*operation result*/, ::vee::net::net_stream::shared_ptr/*stream*/);
     static void __stdcall _on_data_received(session::shared_ptr session, ::vee::io::io_result& io_result, unsigned char* const recieve_buffer_address, size_t recieve_buffer_size);
+    static uint32_t _generate_sid();
 private:
     ::vee::net::net_server::shared_ptr _native_server;
     ::vee::net::net_server::shared_ptr _web_server;
