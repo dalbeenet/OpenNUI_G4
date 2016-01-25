@@ -35,7 +35,19 @@ _body_tracking_info(::std::move(_body_tracking_info))
 
 virtual_device& virtual_device::operator=(virtual_device&& other)
 {
-    //TODO: Implementation
+    _close();
+    _key = ::std::move(other._key);
+    _module = ::std::move(other._module);
+    _name = ::std::move(other._name);
+    _native = ::std::move(other._native);
+    _color_frame_format = ::std::move(_color_frame_format);
+    _depth_frame_format = ::std::move(_depth_frame_format);
+    _body_tracking_info = ::std::move(_body_tracking_info);
+#if OPENNUI_PLATFORM_WINDOWS
+    other._native = NULL;
+#else
+    // Linux and others...
+#endif // !OPENNUI_PLATFORM_WINDOWS
     return *this;
 }
 
