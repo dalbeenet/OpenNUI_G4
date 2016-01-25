@@ -91,6 +91,7 @@
     <ClCompile Include="device_management.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="system\comm\gateway.cpp" />
+    <ClCompile Include="system\comm\protocol.cpp" />
     <ClCompile Include="system\exceptions.cpp" />
     <ClCompile Include="system\logger.cpp" />
     <ClCompile Include="system\virtual_device.cpp" />

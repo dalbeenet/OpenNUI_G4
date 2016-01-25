@@ -39,7 +39,7 @@ public:
     uint32_t id;
     protocol::message message;
     size_t   bytes_transferred;
-    ::std::array<unsigned char, sizeof(message)> buffer;
+    ::std::array<unsigned char, sizeof(message) * 2> buffer; //!ISSUE: vee2.0 RFC6455 헤더 버퍼 패치 후에 정확한 사이즈 사용 가능.
 private:
     session() = delete;
 };
@@ -55,7 +55,9 @@ private:
     void _initialize();
     static void __stdcall _on_client_connected(::vee::net::op_result&/*operation result*/, ::vee::net::net_stream::shared_ptr/*stream*/);
     static void __stdcall _on_data_received(session::shared_ptr session, ::vee::io::io_result& io_result, unsigned char* const recieve_buffer_address, size_t recieve_buffer_size);
-    static uint32_t _generate_sid();
+    static void __stdcall _header_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
+    static void __stdcall _data_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
+    static uint32_t __stdcall _generate_sid();
 private:
     ::vee::net::net_server::shared_ptr _native_server;
     ::vee::net::net_server::shared_ptr _web_server;

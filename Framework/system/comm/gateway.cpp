@@ -71,33 +71,16 @@ void __stdcall gateway::_on_data_received(session::shared_ptr session, ::vee::io
         {
         case session::state_t::read_header:
         {
-            uint32_t remaining_header_size = protocol::message::header_size - session->bytes_transferred;
-            if (io_result.bytes_transferred < remaining_header_size)
-            {
-                memmove(&session->message.header + session->bytes_transferred, buffer, io_result.bytes_transferred);
-                session->bytes_transferred += io_result.bytes_transferred;
-                session->stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
-            }
-            else
-            {
-                uint32_t excess = io_result.bytes_transferred - remaining_header_size;
-                memmove(&session->message.header + session->bytes_transferred, buffer, remaining_header_size);
-                if (excess > 0)
-                    memmove(&session->message.data, buffer + remaining_header_size, excess);
-                session->bytes_transferred += io_result.bytes_transferred;
-                session->switching_state(session::state_t::read_data);
-                session->stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
-            }
+            _header_processing(session, io_result, buffer, buffer_size);
             break;
         } // !case read_header
         case session::state_t::read_data:
         {
-
+            _data_processing(session, io_result, buffer, buffer_size);
             break;
         } // !case read_data
         default:
         {
-
             logger::system_error_log("invalid receive mode");
             break;
         } // !case default
@@ -116,6 +99,80 @@ void __stdcall gateway::_on_data_received(session::shared_ptr session, ::vee::io
                 logger::system_log("client disconnected!");
             }
         }
+    }
+}
+
+void __stdcall gateway::_header_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size)
+{
+    size_t remaining_header_size = sizeof(protocol::message_header) - session->bytes_transferred;
+    if (io_result.bytes_transferred < remaining_header_size)
+    {
+        memmove(&session->message.header + session->bytes_transferred, buffer, io_result.bytes_transferred);
+        session->bytes_transferred += io_result.bytes_transferred;
+        session->stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
+    }
+    else
+    {
+        size_t excess_quantity = io_result.bytes_transferred - remaining_header_size;
+        memmove(&session->message.header + session->bytes_transferred, buffer, remaining_header_size);
+        session->bytes_transferred += remaining_header_size;
+        session->switching_state(session::state_t::read_data);
+        if (excess_quantity > 0)
+        {
+            io_result.bytes_transferred = excess_quantity;
+            memmove(buffer, buffer + remaining_header_size, excess_quantity);
+            _data_processing(session, io_result, buffer, buffer_size);
+        }
+        else
+        {
+            session->stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
+        }
+        return;
+        ///*if (excess_quantity > 0)
+        //    memmove(&session->message.data, buffer + remaining_header_size, excess_quantity);
+        //    session->bytes_transferred += io_result.bytes_transferred;
+        //    try
+        //    {
+        //    protocol::validate_header(session->message.header);
+        //    }
+        //    catch (::vee::exception& e)
+        //    {
+        //    logger::system_error_log(e.to_string());
+        //    session->clear_buffer();
+        //    session->stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
+        //    return;
+        //    }*/
+    }
+}
+
+void __stdcall gateway::_data_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size)
+{
+    size_t data_transferred = session->bytes_transferred - sizeof(protocol::message_header);
+    size_t remaining_data_size = session->message.header.block_size - data_transferred;
+    if (io_result.bytes_transferred < remaining_data_size)
+    {
+        memmove(&session->message.data + data_transferred, buffer, io_result.bytes_transferred);
+        session->bytes_transferred += io_result.bytes_transferred;
+        session->stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
+    }
+    else
+    {
+        size_t excess_quantity = io_result.bytes_transferred - remaining_data_size;
+        memmove(&session->message.data, buffer, remaining_data_size);
+        session->bytes_transferred += remaining_data_size;
+        excess_quantity -= remaining_data_size;
+
+        //TODO: GOTO -> Query Process (pass the message via value-copy)
+
+        if (excess_quantity > 0)
+        {
+            io_result.bytes_transferred = excess_quantity;
+            memmove(buffer, buffer + remaining_data_size, excess_quantity);
+            session->clear_buffer();
+            session->switching_state(session::state_t::read_header);
+            _header_processing(session, io_result, buffer, buffer_size);
+        }
+        return;
     }
 }
 

@@ -16,23 +16,22 @@ Enumeration(comm_port, 12835,
             handshake_port,
             web_comm_port);
 
-static const int handshake_packet_size = 512;
-
 Enumeration(opcode_t, 500,
+            null,
             handshake_hello,
-            );
+            end_of_record);
+
+struct message_header
+{
+    opcode_t opcode = opcode_t::null;
+    uint32_t block_size = 0;
+    uint32_t message_id = 0;
+};
 
 struct message
 {
-    struct header_section
-    {
-        opcode_t opcode;
-        uint32_t block_size;
-        uint32_t message_id;
-    };
-    static const int header_size = sizeof(header_section);
     static const int data_section_max = 512;
-    header_section header;
+    message_header header;
     ::std::array<unsigned char, data_section_max> data;
     inline void clear()
     {
@@ -40,6 +39,8 @@ struct message
         data.fill(0);
     }
 };
+
+void validate_header(message_header& header) throw(...);
 
 } // !namespace 
 

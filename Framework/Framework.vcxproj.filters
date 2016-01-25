@@ -15,6 +15,7 @@
       <Filter>system</Filter>
     </ClCompile>
     <ClCompile Include="system\comm\gateway.cpp" />
+    <ClCompile Include="system\comm\protocol.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="system">

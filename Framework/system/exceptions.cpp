@@ -22,6 +22,24 @@ gle(_gle)
 
 } // !namespace exceptions
 
+namespace comm {
+
+namespace exceptions {
+
+invalid_opcode::invalid_opcode(uint32_t _opcode)
+{
+    sprintf(_desc, "invalid opcode (opcode: %d)", _opcode);
+}
+
+invalid_block_size::invalid_block_size(size_t _block_size)
+{
+    sprintf(_desc, "invalid block size (block size: %d)", _block_size);
+}
+
+} // !namespace exceptions
+
+} // !namespace comm
+
 } // !namespace sys
 
 } // !namespce opennui
