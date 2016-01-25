@@ -40,7 +40,7 @@ void gateway::_initialize()
         _native_server = net::tcp::create_server(protocol::comm_port::handshake_port);
         _web_server = net::rfc6455::create_server(protocol::comm_port::web_comm_port);
         _native_server->async_accept(_on_client_connected);
-        _web_server->async_accept(_on_data_received);
+        _web_server->async_accept(_on_client_connected);
     }
     catch (::vee::exception& e)
     {
@@ -55,7 +55,7 @@ void __stdcall gateway::_on_client_connected(::vee::net::op_result& operation_re
         logger::system_log("new client connected, start the handshake process soon!");
         session::shared_ptr s = ::std::make_shared<session>(stream, _generate_sid());
         s->switching_state(session::state_t::read_header);
-        stream->async_read_some(s->buffer.data(), s->buffer.size(), ::std::bind(_on_data_received, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
+        stream->async_read_some(s->buffer.data(), s->buffer.size(), ::std::bind(_on_data_received, s, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
     }
     else
     {

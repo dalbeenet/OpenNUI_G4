@@ -39,7 +39,7 @@ public:
     uint32_t id;
     protocol::message message;
     size_t   bytes_transferred;
-    ::std::array<unsigned char, sizeof(message) * 2> buffer; //!ISSUE: vee2.0 RFC6455 헤더 버퍼 패치 후에 정확한 사이즈 사용 가능.
+    ::std::array<unsigned char, sizeof(protocol::message) * 2> buffer; //!ISSUE: vee2.0 RFC6455 헤더 버퍼 패치 후에 정확한 사이즈 사용 가능.
 private:
     session() = delete;
 };
