@@ -35,6 +35,7 @@ _body_tracking_info(::std::move(_body_tracking_info))
 
 virtual_device& virtual_device::operator=(virtual_device&& other)
 {
+    //TODO: Implementation
     return *this;
 }
 
