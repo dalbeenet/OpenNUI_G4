@@ -23,23 +23,31 @@ public:
                 read_header,
                 read_data);
     session(stream_t _stream, uint32_t _id);
+    session(session&& other);
+    session& operator=(session&& rhs);
     inline void switching_state(state_t new_state)
     {
         state = new_state;
     }
-    inline void clear_buffer()
+    inline void clear_msgbuf_in()
     {
-        bytes_transferred = 0;
-        message.clear();
+        bytes_transferred_in = 0;
+        msgbuf_in.clear();
+    }
+    inline void clear_msgbuf_out()
+    {
+        msgbuf_out.clear();
     }
 
 public:
     stream_t stream;
     state_t  state;
-    const uint32_t id;
-    protocol::comm::message message;
-    size_t   bytes_transferred;
-    ::std::array<unsigned char, sizeof(protocol::comm::message) * 2> buffer; //!ISSUE: vee2.0 RFC6455 헤더 버퍼 패치 후에 정확한 사이즈 사용 가능.
+    uint32_t id;
+    protocol::comm::message msgbuf_in;
+    protocol::comm::message msgbuf_out;
+    size_t   bytes_transferred_in;
+    ::std::array<unsigned char, sizeof(protocol::comm::message) * 2> buffer_in; //!ISSUE: vee2.0 RFC6455 헤더 버퍼 패치 후에 정확한 사이즈 사용 가능.
+    ::std::array<unsigned char, sizeof(protocol::comm::message) * 2> buffer_out; //!ISSUE: vee2.0 RFC6455 헤더 버퍼 패치 후에 정확한 사이즈 사용 가능.
 
 private:
     session() = delete;
@@ -49,20 +57,21 @@ class gateway final
 {
 public:
     ~gateway();
+    static void __stdcall open();
     
 private:
+    using server_t = ::vee::net::net_server::shared_ptr;
     static gateway& _get_instance();
     gateway();
-    void _initialize();
-    static void __stdcall _on_client_connected(::vee::net::op_result&/*operation result*/, ::vee::net::net_stream::shared_ptr/*stream*/);
+    static void __stdcall _on_client_connected(server_t server, ::vee::net::op_result&/*operation result*/, ::vee::net::net_stream::shared_ptr/*stream*/);
     static void __stdcall _on_data_received(session::shared_ptr session, ::vee::io::io_result& io_result, unsigned char* const recieve_buffer_address, size_t recieve_buffer_size);
     static void __stdcall _header_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
     static void __stdcall _data_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
     static uint32_t __stdcall _generate_sid();
 
 private:
-    ::vee::net::net_server::shared_ptr _native_server;
-    ::vee::net::net_server::shared_ptr _web_server;
+    server_t _native_server;
+    server_t _web_server;
 };
 
 } // !namespace comm

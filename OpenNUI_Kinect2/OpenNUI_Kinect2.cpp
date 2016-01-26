@@ -8,14 +8,14 @@ class kinect2: public opennui_device
 public:
     kinect2()
     {
-        puts("Hello kinect2!");
+        //puts("Hello kinect2!");
     }
     DEFINE_OPENNUI_DEVICE(kinect2);
 };
 
 kinect2::~kinect2()
 {
-    puts("Goodbye kinect2!");
+    //puts("Goodbye kinect2!");
 }
 
 bool kinect2::open()
@@ -117,19 +117,19 @@ BOOL WINAPI DllMain(HINSTANCE module_handle, DWORD reason_for_call, LPVOID reser
     switch (reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
-        puts("DLL_PROCESS_ATTACH");
+        //puts("DLL_PROCESS_ATTACH");
         break;
     case DLL_PROCESS_DETACH:
-        puts("DLL_PROCESS_DETACH");
+        //puts("DLL_PROCESS_DETACH");
         break;
     case DLL_THREAD_ATTACH:
-        puts("DLL_THREAD_ATTACH");
+        //puts("DLL_THREAD_ATTACH");
         break;
     case DLL_THREAD_DETACH:
-        puts("DLL_THREAD_DETACH");
+        //puts("DLL_THREAD_DETACH");
         break;
     default:
-        puts("INVALID REASON");
+        //puts("INVALID REASON");
         break;
     }
     return TRUE;

@@ -11,7 +11,7 @@ namespace protocol {
 namespace comm {
 
 Enumeration(comm_port, 12835,
-            handshake_port,
+            native_comm_port,
             web_comm_port);
 
 Enumeration(opcode_t, 500,
@@ -19,12 +19,14 @@ Enumeration(opcode_t, 500,
             handshake_hello,
             end_of_record);
 
+#pragma pack(push, 1)
 struct message_header
 {
     opcode_t opcode = opcode_t::null;
     uint32_t block_size = 0;
     uint32_t message_id = 0;
 };
+#pragma pack(pop)
 
 struct message
 {
@@ -35,6 +37,12 @@ struct message
     {
         memset(&header, 0, sizeof(header));
         data.fill(0);
+    }
+    inline uint32_t to_binary(unsigned char* dst)
+    {
+        memmove(dst, &header, sizeof(message_header));
+        memmove(dst + sizeof(message_header), &data, header.block_size);
+        return sizeof(message_header) + header.block_size;
     }
 };
 

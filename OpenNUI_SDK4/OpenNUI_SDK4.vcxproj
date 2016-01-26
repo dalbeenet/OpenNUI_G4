@@ -42,14 +42,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)\lib\x32\</OutDir>
     <IntDir>$(SolutionDir)\obj\x32\Debug\$(ProjectName)\</IntDir>
-    <TargetName>$(ProjectName)_sgd</TargetName>
+    <TargetName>opennui_sdk4-vc120-sgd-400</TargetName>
     <IncludePath>$(SolutionDir)\inc;$(VEE_2_0);$(IncludePath)</IncludePath>
     <LibraryPath>$(VEE_2_0)\lib\x32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)\lib\x32\</OutDir>
     <IntDir>$(SolutionDir)\obj\x32\Release\$(ProjectName)\</IntDir>
-    <TargetName>$(ProjectName)_s</TargetName>
+    <TargetName>opennui_sdk4-vc120-s-400</TargetName>
     <IncludePath>$(SolutionDir)\inc;$(VEE_2_0);$(IncludePath)</IncludePath>
     <LibraryPath>$(VEE_2_0)\lib\x32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -98,6 +98,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\opennui\clnt\comm\session.h" />
     <ClInclude Include="..\inc\opennui\comm\protocol.h" />
     <ClInclude Include="..\inc\opennui\exceptions.h" />
     <ClInclude Include="..\inc\opennui\nuidata.h" />
@@ -107,6 +108,7 @@
     <ClInclude Include="..\inc\opennui\version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="clnt\comm\session.cpp" />
     <ClCompile Include="comm\protocol.cpp" />
     <ClCompile Include="exceptions.cpp" />
     <ClCompile Include="sdk4.cpp" />

@@ -7,6 +7,12 @@
     <Filter Include="opennui\comm">
       <UniqueIdentifier>{e87553a3-8b18-45e9-b3dc-21f5236cc13b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="opennui\clnt">
+      <UniqueIdentifier>{c8866539-e55b-4d66-ac14-020ab788afc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="opennui\clnt\comm">
+      <UniqueIdentifier>{7bdbf9d1-2a27-404e-9c7e-ef952c7d42e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -30,7 +36,12 @@
     <ClInclude Include="..\inc\opennui\comm\protocol.h">
       <Filter>opennui\comm</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\opennui\exceptions.h" />
+    <ClInclude Include="..\inc\opennui\exceptions.h">
+      <Filter>opennui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\opennui\clnt\comm\session.h">
+      <Filter>opennui\clnt\comm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sdk4.cpp" />
@@ -38,5 +49,8 @@
       <Filter>opennui\comm</Filter>
     </ClCompile>
     <ClCompile Include="exceptions.cpp" />
+    <ClCompile Include="clnt\comm\session.cpp">
+      <Filter>opennui\clnt\comm</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
