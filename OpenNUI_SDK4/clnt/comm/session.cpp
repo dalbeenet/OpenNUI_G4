@@ -1,5 +1,4 @@
 #include <opennui/clnt/comm/session.h>
-#include <Windows.h>
 
 namespace opennui {
 
@@ -24,11 +23,7 @@ session::shared_ptr connect_to_local_framework() throw(...)
     cs->msgbuf_out.header.block_size = 0;
     cs->msgbuf_out.header.message_id = 1;
     uint32_t szmsg = cs->msgbuf_out.to_binary(cs->buffer_out.data());
-    for (uint32_t i = 0; i < szmsg; ++i)
-    {
-        cs->stream->write_some(cs->buffer_out.data() + i, 1);
-        Sleep(100);
-    }
+    cs->stream->write_some(cs->buffer_out.data(), szmsg);
     return cs;
 }
 

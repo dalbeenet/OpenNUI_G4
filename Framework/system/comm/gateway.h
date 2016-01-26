@@ -4,6 +4,7 @@
 #include <system/exceptions.h>
 #include <opennui/protocol.h>
 #include <vee/network/net.h>
+#include <atomic>
 
 namespace opennui {
 
@@ -22,9 +23,14 @@ public:
                 init,
                 read_header,
                 read_data);
+    Enumeration(clnttype, 0,
+                null,
+                native,
+                web);
     session(stream_t _stream, uint32_t _id);
     session(session&& other);
     session& operator=(session&& rhs);
+    ~session();
     inline void switching_state(state_t new_state)
     {
         state = new_state;
@@ -42,6 +48,7 @@ public:
 public:
     stream_t stream;
     state_t  state;
+    clnttype type;
     uint32_t id;
     protocol::comm::message msgbuf_in;
     protocol::comm::message msgbuf_out;
@@ -58,20 +65,25 @@ class gateway final
 public:
     ~gateway();
     static void __stdcall open();
-    
+    static void __stdcall close();
+
 private:
+    Enumeration(server_type, 0,
+                native,
+                web);
     using server_t = ::vee::net::net_server::shared_ptr;
     static gateway& _get_instance();
     gateway();
-    static void __stdcall _on_client_connected(server_t server, ::vee::net::op_result&/*operation result*/, ::vee::net::net_stream::shared_ptr/*stream*/);
+    static void __stdcall _on_client_connected(server_t server, server_type type,::vee::net::op_result&/*operation result*/, ::vee::net::net_stream::shared_ptr/*stream*/);
     static void __stdcall _on_data_received(session::shared_ptr session, ::vee::io::io_result& io_result, unsigned char* const recieve_buffer_address, size_t recieve_buffer_size);
     static void __stdcall _header_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
     static void __stdcall _data_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
     static uint32_t __stdcall _generate_sid();
-
+    static void __stdcall _query_processing(session::shared_ptr& session);
 private:
     server_t _native_server;
     server_t _web_server;
+    ::std::atomic<bool> _flag_open;
 };
 
 } // !namespace comm

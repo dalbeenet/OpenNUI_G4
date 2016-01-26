@@ -10,6 +10,7 @@ namespace comm {
 session::session(stream_t _stream, uint32_t _id):
 stream(_stream),
 state(state_t::init),
+type(clnttype::null),
 id(_id),
 bytes_transferred_in(0)
 {
@@ -20,6 +21,7 @@ bytes_transferred_in(0)
 session::session(session&& other):
 stream(::std::move(other.stream)),
 state(::std::move(other.state)),
+type(::std::move(other.type)),
 id(::std::move(other.id)),
 bytes_transferred_in(::std::move(other.bytes_transferred_in)),
 buffer_in(::std::move(other.buffer_in)),
@@ -32,6 +34,7 @@ session& session::operator=(session&& rhs)
 {
     stream = ::std::move(rhs.stream);
     state = ::std::move(rhs.state);
+    type = ::std::move(rhs.type);
     id = ::std::move(rhs.id);
     bytes_transferred_in = ::std::move(rhs.bytes_transferred_in);
     buffer_in = ::std::move(rhs.buffer_in);
@@ -39,9 +42,15 @@ session& session::operator=(session&& rhs)
     return *this;
 }
 
+session::~session()
+{
+    logger::system_log("session %d destroyed", id);
+}
+
 gateway::~gateway()
 {
-
+    close();
+    logger::system_log("gateway destroyed");
 }
 
 gateway& gateway::_get_instance()
@@ -50,7 +59,8 @@ gateway& gateway::_get_instance()
     return unique_instance;
 }
 
-gateway::gateway()
+gateway::gateway():
+_flag_open(false)
 {
     // open();
 }
@@ -61,12 +71,14 @@ void __stdcall gateway::open()
     gateway& inst = _get_instance();
     try
     {
+        gateway::close();
         inst._native_server = net::tcp::create_server(protocol::comm::comm_port::native_comm_port);
         inst._web_server = net::rfc6455::create_server(protocol::comm::comm_port::web_comm_port);
-        inst._native_server->async_accept(::std::bind(_on_client_connected, inst._native_server, ::std::placeholders::_1, ::std::placeholders::_2));
+        inst._native_server->async_accept(::std::bind(_on_client_connected, inst._native_server, server_type::native, ::std::placeholders::_1, ::std::placeholders::_2));
         logger::system_log("native server is online");
-        inst._web_server->async_accept(::std::bind(_on_client_connected, inst._web_server, ::std::placeholders::_1, ::std::placeholders::_2));
+        inst._web_server->async_accept(::std::bind(_on_client_connected, inst._web_server, server_type::web, ::std::placeholders::_1, ::std::placeholders::_2));
         logger::system_log("web server is online");
+        inst._flag_open = true;
     }
     catch (::vee::exception& e)
     {
@@ -74,19 +86,35 @@ void __stdcall gateway::open()
     }
 }
 
-void __stdcall gateway::_on_client_connected(server_t server, ::vee::net::op_result& operation_result, ::vee::net::net_stream::shared_ptr stream)
+void __stdcall gateway::close()
+{
+    gateway& inst = _get_instance();
+    if (inst._native_server.use_count() != 0)
+    {
+        inst._native_server->close();
+        inst._native_server.reset();
+    }
+    if (inst._web_server.use_count() != 0)
+    {
+        inst._web_server->close();
+        inst._web_server.reset();
+    }
+    inst._flag_open = false;
+}
+
+void __stdcall gateway::_on_client_connected(server_t server, server_type type,::vee::net::op_result& operation_result, ::vee::net::net_stream::shared_ptr stream)
 {
     if (operation_result.is_success)
     {
-        logger::system_log("new client connected, start the handshake process soon!");
         session::shared_ptr s = ::std::make_shared<session>(stream, _generate_sid());
+        logger::system_log("new %s client(sid: %d) connected, start the handshake process soon!", type.to_string(), s->id);
         s->switching_state(session::state_t::read_header);
         stream->async_read_some(s->buffer_in.data(), s->buffer_in.size(), ::std::bind(_on_data_received, s, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
-        server->async_accept(::std::bind(_on_client_connected, server, ::std::placeholders::_1, ::std::placeholders::_2));
+        server->async_accept(::std::bind(_on_client_connected, server, type, ::std::placeholders::_1, ::std::placeholders::_2));
     }
     else
     {
-        logger::system_error_log("native server asynchronous connection failed!");
+        logger::system_error_log("%s server asynchronous accept failed!", type.to_string());
     }
 }
 
@@ -119,7 +147,7 @@ void __stdcall gateway::_on_data_received(session::shared_ptr session, ::vee::io
         {
             if (io_result.bytes_transferred != 0)
             {
-                logger::system_error_log("client(sid: %d) disconnected, %d bytes of data lost", session->id, io_result.bytes_transferred);
+                logger::system_error_log("client(sid: %d) disconnected, %d bytes of data loss", session->id, io_result.bytes_transferred);
             }
             else
             {
@@ -159,7 +187,7 @@ void __stdcall gateway::_header_processing(session::shared_ptr& session, ::vee::
             }
         }
         session->switching_state(session::state_t::read_data);
-        if (excess_quantity > 0)
+        if (excess_quantity >= 0)
         {
             io_result.bytes_transferred = excess_quantity;
             memmove(buffer, buffer + remaining_header_size, excess_quantity);
@@ -170,9 +198,6 @@ void __stdcall gateway::_header_processing(session::shared_ptr& session, ::vee::
             session->stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
         }
         return;
-        ///*if (excess_quantity > 0)
-        //    memmove(&session->msgbuf_in.data, buffer + remaining_header_size, excess_quantity);
-        //    session->bytes_transferred_in += io_result.bytes_transferred;
     }
 }
 
@@ -198,9 +223,10 @@ void __stdcall gateway::_data_processing(session::shared_ptr& session, ::vee::io
                            session->msgbuf_in.header.opcode.to_string(),
                            session->msgbuf_in.header.block_size,
                            session->msgbuf_in.header.message_id);
-        //TODO: GOTO -> Query Process (pass the message via value-copy)
+        
+        _query_processing(session);
 
-        if (excess_quantity > 0)
+        if (excess_quantity >= 0)
         {
             io_result.bytes_transferred = excess_quantity;
             memmove(buffer, buffer + remaining_data_size, excess_quantity);
@@ -216,6 +242,14 @@ uint32_t gateway::_generate_sid()
 {
     static int sid = 100;
     return sid++;
+}
+
+void __stdcall gateway::_query_processing(session::shared_ptr& session)
+{
+    protocol::comm::message_header& header = session->msgbuf_in.header;
+    unsigned char* data = session->msgbuf_in.data.data();
+    logger::system_log("Enter query processing: sid: %d, opcode: %d", session->id, header.opcode);
+
 }
 
 } // !namespace comm

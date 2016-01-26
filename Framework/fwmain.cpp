@@ -9,6 +9,7 @@ using namespace opennui;
 int main()
 {
     namespace sys = ::opennui::sys;
+    system("color 7");
     sys::device_loader::create_all();
     sys::comm::gateway::open();
     {
@@ -16,6 +17,5 @@ int main()
         char buffer[128];
         fgets(buffer, 128, stdin);
     }
-    //::std::this_thread::sleep_for(::std::chrono::milliseconds::duration(2000));
     return 0;
 }
