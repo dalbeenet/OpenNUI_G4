@@ -43,36 +43,46 @@
     <OutDir>$(SolutionDir)\lib\x32\</OutDir>
     <IntDir>$(SolutionDir)\obj\x32\Debug\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)_sgd</TargetName>
-    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\inc;$(VEE_2_0);$(IncludePath)</IncludePath>
+    <LibraryPath>$(VEE_2_0)\lib\x32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)\lib\x32\</OutDir>
     <IntDir>$(SolutionDir)\obj\x32\Release\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)_s</TargetName>
-    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\inc;$(VEE_2_0);$(IncludePath)</IncludePath>
+    <LibraryPath>$(VEE_2_0)\lib\x32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>vee2.0-vc120-sgd-2_0.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -80,17 +90,25 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <AdditionalDependencies>vee2.0-vc120-s-2_0.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\opennui\comm\protocol.h" />
+    <ClInclude Include="..\inc\opennui\exceptions.h" />
     <ClInclude Include="..\inc\opennui\nuidata.h" />
     <ClInclude Include="..\inc\opennui\nuidevice.h" />
     <ClInclude Include="..\inc\opennui\opennui.h" />
+    <ClInclude Include="..\inc\opennui\protocol.h" />
     <ClInclude Include="..\inc\opennui\version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="comm\protocol.cpp" />
+    <ClCompile Include="exceptions.cpp" />
     <ClCompile Include="sdk4.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

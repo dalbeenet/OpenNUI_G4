@@ -2,7 +2,7 @@
 #define _OPENNUI_SYSTEM_COMM_GATEWAY_H_
 
 #include <system/exceptions.h>
-#include <system/comm/protocol.h>
+#include <opennui/protocol.h>
 #include <vee/network/net.h>
 
 namespace opennui {
@@ -36,10 +36,11 @@ public:
 public:
     stream_t stream;
     state_t  state;
-    uint32_t id;
-    protocol::message message;
+    const uint32_t id;
+    protocol::comm::message message;
     size_t   bytes_transferred;
-    ::std::array<unsigned char, sizeof(protocol::message) * 2> buffer; //!ISSUE: vee2.0 RFC6455 헤더 버퍼 패치 후에 정확한 사이즈 사용 가능.
+    ::std::array<unsigned char, sizeof(protocol::comm::message) * 2> buffer; //!ISSUE: vee2.0 RFC6455 헤더 버퍼 패치 후에 정확한 사이즈 사용 가능.
+
 private:
     session() = delete;
 };
@@ -58,6 +59,7 @@ private:
     static void __stdcall _header_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
     static void __stdcall _data_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
     static uint32_t __stdcall _generate_sid();
+
 private:
     ::vee::net::net_server::shared_ptr _native_server;
     ::vee::net::net_server::shared_ptr _web_server;

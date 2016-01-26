@@ -1,5 +1,5 @@
-#ifndef _OPENNUI_NUIDATA_H_
-#define _OPENNUI_NUIDATA_H_
+#ifndef _OPENNUI_SDK4_NUIDATA_H_
+#define _OPENNUI_SDK4_NUIDATA_H_
 
 #include <cinttypes>
 #include <array>
@@ -247,4 +247,4 @@ using nuihand = tracking::hand::nuihand;
 
 } // !namespace opennui
 
-#endif // !_OPENNUI_NUIDATA_H_
+#endif // !_OPENNUI_SDK4_NUIDATA_H_

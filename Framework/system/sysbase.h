@@ -3,6 +3,7 @@
 
 #include <opennui/opennui.h>
 #include <system/logger.h>
+#include <vee/concurrency/scheduler.h>
 
 // Check windows
 #if _WIN32 || _WIN64
@@ -32,6 +33,10 @@
 namespace opennui {
 
 namespace sys {
+
+#define OPENNUI_SYSTEM_TASK_ARGS uint32_t /*task_id*/
+#define OPENNUI_SYSTEM_TASK_SIG  void(OPENNUI_SYSTEM_TASK_ARGS)
+extern ::vee::scheduler<OPENNUI_SYSTEM_TASK_SIG> scheduler;
 
 } // !namespace sys
 

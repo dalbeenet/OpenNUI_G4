@@ -4,6 +4,9 @@
     <Filter Include="opennui">
       <UniqueIdentifier>{6ecdfc9d-3fbd-447e-bdfd-284c82f16c18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="opennui\comm">
+      <UniqueIdentifier>{e87553a3-8b18-45e9-b3dc-21f5236cc13b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -21,8 +24,19 @@
     <ClInclude Include="..\inc\opennui\nuidevice.h">
       <Filter>opennui</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\opennui\protocol.h">
+      <Filter>opennui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\opennui\comm\protocol.h">
+      <Filter>opennui\comm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\opennui\exceptions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sdk4.cpp" />
+    <ClCompile Include="comm\protocol.cpp">
+      <Filter>opennui\comm</Filter>
+    </ClCompile>
+    <ClCompile Include="exceptions.cpp" />
   </ItemGroup>
 </Project>

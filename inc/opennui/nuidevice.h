@@ -1,5 +1,5 @@
-#ifndef _OPENNUI_NUIDEVICE_H_
-#define _OPENNUI_NUIDEVICE_H_
+#ifndef _OPENNUI_SDK4_NUIDEVICE_H_
+#define _OPENNUI_SDK4_NUIDEVICE_H_
 
 #include <opennui/nuidata.h>
 #include <string>
@@ -86,4 +86,4 @@ class opennui_plugin abstract
 
 } // !namespace opennui
 
-#endif // !_OPENNUI_NUIDEVICE_H_
+#endif // !_OPENNUI_SDK4_NUIDEVICE_H_
