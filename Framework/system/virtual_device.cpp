@@ -17,40 +17,6 @@ virtual_device::~virtual_device()
     _close();
 }
 
-virtual_device::virtual_device(virtual_device&& other):
-_key(::std::move(other._key)),
-_module(::std::move(other._module)),
-_name(::std::move(other._name)),
-_native(::std::move(other._native)),
-_color_frame_format(::std::move(_color_frame_format)),
-_depth_frame_format(::std::move(_depth_frame_format)),
-_body_tracking_info(::std::move(_body_tracking_info))
-{
-#if OPENNUI_PLATFORM_WINDOWS
-    other._native = NULL;
-#else
-    // Linux and others...
-#endif // !OPENNUI_PLATFORM_WINDOWS
-}
-
-virtual_device& virtual_device::operator=(virtual_device&& other)
-{
-    _close();
-    _key = ::std::move(other._key);
-    _module = ::std::move(other._module);
-    _name = ::std::move(other._name);
-    _native = ::std::move(other._native);
-    _color_frame_format = ::std::move(_color_frame_format);
-    _depth_frame_format = ::std::move(_depth_frame_format);
-    _body_tracking_info = ::std::move(_body_tracking_info);
-#if OPENNUI_PLATFORM_WINDOWS
-    other._native = NULL;
-#else
-    // Linux and others...
-#endif // !OPENNUI_PLATFORM_WINDOWS
-    return *this;
-}
-
 void virtual_device::_open(const char* module_path) throw(...)
 {
     if (::vee::filesystem::exists(module_path) == false || ::vee::filesystem::is_regular_file(module_path) == false)
@@ -83,6 +49,25 @@ void virtual_device::_open(const char* module_path) throw(...)
     _module->get_color_frame_format(_color_frame_format);
     _module->get_depth_frame_format(_depth_frame_format);
     _module->get_body_tracking_info(_body_tracking_info);
+    _module->open();
+    _color_frame_buffer = ::std::make_shared<shared_buffer>((_name + "-color-buffer").c_str(), 
+                                                            _color_frame_format.size(),
+                                                            15,
+                                                            _key);
+    _depth_frame_buffer = ::std::make_shared<shared_buffer>((_name + "-depth-buffer").c_str(),
+                                                            _depth_frame_format.size(),
+                                                            15,
+                                                            _key);
+    logger::system_log("Virtual device is opened\n\tkey:\t%d\n\tname:\t%s\n\tcfbuf:\t%s\n\tdfbuf:\t%s\n\t",
+                       _key,
+                       _name.c_str(),
+                       _color_frame_buffer->get_name(),
+                       _depth_frame_buffer->get_name()
+                       );
+    /*_body_frame_buffer = ::std::make_shared<shared_buffer>((_name + "-body_tracking-buffer").c_str(),
+                                                           _body_tracking_info.maximum_tracking_bodies,
+                                                           15,
+                                                           _key);*/
 #else
     // Linux and others...
 #endif
@@ -97,6 +82,10 @@ void virtual_device::_close() __noexcept
         {
             logger::system_error_log("FreeLibrary() failed in %s (gle: %d)", __FUNCTION__, GetLastError());
         }
+    }
+    else
+    {
+        logger::system_log("FreeLibraray() succeed, %s", name());
     }
 #endif
 }

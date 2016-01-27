@@ -15,6 +15,7 @@ namespace comm {
 class session
 {
     DISALLOW_COPY_AND_ASSIGN(session);
+    DISALLOW_MOVE_AND_ASSIGN(session);
 public:
     using shared_ptr = ::std::shared_ptr<session>;
     using unqiue_ptr = ::std::unique_ptr<session>;
@@ -24,8 +25,8 @@ public:
                 read_header,
                 read_data);
     session(stream_t _stream, uint32_t _id);
-    session(session&& other);
-    session& operator=(session&& rhs);
+    /*session(session&& other);
+    session& operator=(session&& rhs);*/
     ~session();
     inline void switching_state(state_t new_state)
     {

@@ -13,6 +13,9 @@
     <Filter Include="opennui\clnt\comm">
       <UniqueIdentifier>{7bdbf9d1-2a27-404e-9c7e-ef952c7d42e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="opennui\service">
+      <UniqueIdentifier>{9c1de50a-ac8b-4aae-9447-71d8f990a20b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -42,6 +45,12 @@
     <ClInclude Include="..\inc\opennui\clnt\logger.h">
       <Filter>opennui\clnt</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\opennui\service\shared_buffer.h">
+      <Filter>opennui\service</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\opennui\clnt\api.h">
+      <Filter>opennui\clnt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sdk4.cpp" />
@@ -54,6 +63,12 @@
     </ClCompile>
     <ClCompile Include="clnt\comm\native_session.cpp">
       <Filter>opennui\clnt\comm</Filter>
+    </ClCompile>
+    <ClCompile Include="service\shared_buffer.cpp">
+      <Filter>opennui\service</Filter>
+    </ClCompile>
+    <ClCompile Include="clnt\api.cpp">
+      <Filter>opennui\clnt</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

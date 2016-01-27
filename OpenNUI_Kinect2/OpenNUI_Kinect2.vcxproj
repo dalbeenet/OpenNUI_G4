@@ -43,16 +43,16 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\x32\modules\</OutDir>
     <IntDir>$(SolutionDir)\obj\x32\Debug\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\lib\x32;$(VEE_2_0)\lib\x32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\inc;$(KINECTSDK20_DIR)\inc;$(IncludePath)</IncludePath>
+    <LibraryPath>$(KINECTSDK20_DIR)\lib\x86;$(SolutionDir)\lib\x32;$(VEE_2_0)\lib\x32;$(LibraryPath)</LibraryPath>
     <TargetExt>.nuidevice</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\x32\modules\</OutDir>
     <IntDir>$(SolutionDir)\obj\x32\Release\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)\inc;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\lib\x32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(KINECTSDK20_DIR)\inc;$(SolutionDir)\inc;$(IncludePath)</IncludePath>
+    <LibraryPath>$(KINECTSDK20_DIR)\lib\x86;$(SolutionDir)\lib\x32;$(LibraryPath)</LibraryPath>
     <TargetExt>.nuidevice</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -67,7 +67,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opennui_sdk4-vc120-sgd-400.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opennui_sdk4-vc120-sgd-400.lib;Kinect20.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>opennui_exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -87,7 +87,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opennui_sdk4-vc120-s-400.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opennui_sdk4-vc120-s-400.lib;Kinect20.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>opennui_exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>

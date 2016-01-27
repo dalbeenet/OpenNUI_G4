@@ -23,34 +23,6 @@ bytes_transferred_in(0)
     buffer_out.fill(0);
 }
 
-session::session(session&& other):
-keep_alive_stream(::std::move(other.keep_alive_stream)),
-cts_msg_stream(::std::move(other.cts_msg_stream)),
-stc_msg_stream(::std::move(other.stc_msg_stream)),
-state(::std::move(other.state)),
-type(::std::move(other.type)),
-id(::std::move(other.id)),
-bytes_transferred_in(::std::move(other.bytes_transferred_in)),
-buffer_in(::std::move(other.buffer_in)),
-buffer_out(::std::move(other.buffer_out))
-{
-
-}
-
-session& session::operator=(session&& rhs)
-{
-    keep_alive_stream = ::std::move(rhs.keep_alive_stream);
-    cts_msg_stream = ::std::move(rhs.cts_msg_stream);
-    stc_msg_stream = ::std::move(rhs.stc_msg_stream);
-    state = ::std::move(rhs.state);
-    type = ::std::move(rhs.type);
-    id = ::std::move(rhs.id);
-    bytes_transferred_in = ::std::move(rhs.bytes_transferred_in);
-    buffer_in = ::std::move(rhs.buffer_in);
-    buffer_out = ::std::move(rhs.buffer_out);
-    return *this;
-}
-
 session::~session()
 {
     logger::system_log("session %d destroyed", id);
@@ -350,7 +322,7 @@ void __stdcall gateway::query_processing::handshake(session::shared_ptr session,
         auto stc_pipe_server = vee::interprocess::windows::create_named_pipe_server();
         using data_transfer_mode = vee::interprocess::named_pipe::data_transfer_mode;
         char pipe_name_base[512] = { 0, };
-        sprintf_s(pipe_name_base, "\\\\.\\pipe\\opennui_g4_msgpipe_%d", session->id);
+        sprintf_s(pipe_name_base, "\\\\.\\pipe\\opennui-g4-msgpipe-%d", session->id);
 
         session::stream_t cts_msg_stream;
         session::stream_t stc_msg_stream;
@@ -359,7 +331,7 @@ void __stdcall gateway::query_processing::handshake(session::shared_ptr session,
         auto cts_connection = std::async(std::launch::async, [&]() -> bool // CTS connection
         {
             std::string cts_pipe_name(pipe_name_base);
-            cts_pipe_name.append("_cts");
+            cts_pipe_name.append("-cts");
             logger::system_log("Start the [client -> framework] message stream accept process\n\tsid: %d, pipe name: %s", session->id, cts_pipe_name.c_str());
             try
             {
@@ -377,7 +349,7 @@ void __stdcall gateway::query_processing::handshake(session::shared_ptr session,
         auto stc_connection = std::async(std::launch::async, [&]() -> bool // STC connection
         {
             std::string stc_pipe_name(pipe_name_base);
-            stc_pipe_name.append("_stc");
+            stc_pipe_name.append("-stc");
             logger::system_log("Start the [framework -> client] message stream accept process\n\tsid: %d, pipe name: %s", session->id, stc_pipe_name.c_str());
             try
             {

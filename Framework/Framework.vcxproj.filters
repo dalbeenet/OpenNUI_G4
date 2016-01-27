@@ -20,7 +20,9 @@
     <ClCompile Include="system\comm\gateway.cpp">
       <Filter>system\comm</Filter>
     </ClCompile>
-    <ClCompile Include="system\shared_buffer.cpp" />
+    <ClCompile Include="system\frdmgr.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="system">
@@ -49,8 +51,9 @@
     <ClInclude Include="system\comm\gateway.h">
       <Filter>system\comm</Filter>
     </ClInclude>
-    <ClInclude Include="system\shared_buffer.h">
+    <ClInclude Include="system\frdmgr.h">
       <Filter>system</Filter>
     </ClInclude>
+    <ClInclude Include="system\sysmsg.h" />
   </ItemGroup>
 </Project>

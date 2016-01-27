@@ -99,6 +99,22 @@ void logger::system_error_log(std::string& s)
     set_console_color(old);
 }
 
+void logger::system_msg(unsigned short color, const char* format, ...)
+{
+    std::array<char, 2048> buffer;
+    buffer.fill(0);
+    va_list ap;
+    va_start(ap, format);
+    vsprintf_s(buffer.data(), buffer.size(), format, ap);
+    {
+        ::std::lock_guard<::vee::spin_lock> guard(logger_lock);
+        WORD old = set_console_color(color);
+        fprintf(stdout, "sys> %s\n", buffer.data());
+        set_console_color(old);
+    }
+    va_end(ap);
+}
+
 } // !namespace clnt
 
 } // !namespace opennui

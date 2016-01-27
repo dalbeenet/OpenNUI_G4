@@ -1,4 +1,5 @@
 #include <system/device_manager.h>
+#include <system/frdmgr.h>
 #include <vee/filesystem/path.h>
 
 namespace opennui {
@@ -29,7 +30,9 @@ namespace sys {
         for (auto& module_path : list_modules)
         {
             logger::system_log("Load module \"%s\"", module_path.c_str());
-            ret.push_back(::std::make_shared<virtual_device>(module_path.c_str()));
+            virtual_device::shared_ptr ptr = ::std::make_shared<virtual_device>(module_path.c_str());
+            ret.push_back(ptr);
+            frdmgr::send_message(frdmgr::frdmgr_msg::option::create, ptr);
         }
     }
     catch (::vee::exception& e)
@@ -51,6 +54,11 @@ device_manager& device_manager::_get_instance()
 {
     static device_manager unique_instance;
     return unique_instance;
+}
+
+device_manager::~device_manager()
+{
+
 }
 #pragma endregion !implementation of device_manager class
 

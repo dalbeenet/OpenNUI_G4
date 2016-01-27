@@ -98,6 +98,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\opennui\clnt\api.h" />
     <ClInclude Include="..\inc\opennui\clnt\comm\session.h" />
     <ClInclude Include="..\inc\opennui\clnt\logger.h" />
     <ClInclude Include="..\inc\opennui\comm\protocol.h" />
@@ -105,14 +106,17 @@
     <ClInclude Include="..\inc\opennui\nuidata.h" />
     <ClInclude Include="..\inc\opennui\nuidevice.h" />
     <ClInclude Include="..\inc\opennui\protocol.h" />
+    <ClInclude Include="..\inc\opennui\service\shared_buffer.h" />
     <ClInclude Include="..\inc\opennui\version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="clnt\api.cpp" />
     <ClCompile Include="clnt\comm\native_session.cpp" />
     <ClCompile Include="clnt\logger.cpp" />
     <ClCompile Include="comm\protocol.cpp" />
     <ClCompile Include="exceptions.cpp" />
     <ClCompile Include="sdk4.cpp" />
+    <ClCompile Include="service\shared_buffer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -14,6 +14,7 @@ public:
     static void system_log(const char* format, ...);
     static void system_error_log(std::string& s);
     static void system_error_log(const char* format, ...);
+    static void system_msg(unsigned short color, const char* format, ...);
 };
 
 } // !namespace sys

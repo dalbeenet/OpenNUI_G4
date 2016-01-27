@@ -98,13 +98,13 @@ native_session::shared_ptr connect_to_local_framework() throw(...)
             intprc::named_pipe::shared_ptr stc_pipe = intprc::windows::create_named_pipe();
             
             char pipe_name_base[512] = { 0, };
-            sprintf_s(pipe_name_base, "\\\\.\\pipe\\opennui_g4_msgpipe_%d", ns->id);
+            sprintf_s(pipe_name_base, "\\\\.\\pipe\\opennui-g4-msgpipe-%d", ns->id);
             
             std::string cts_pipe_name(pipe_name_base);
-            cts_pipe_name.append("_cts");
+            cts_pipe_name.append("-cts");
 
             std::string stc_pipe_name(pipe_name_base);
-            stc_pipe_name.append("_stc");
+            stc_pipe_name.append("-stc");
 
             logger::system_log("Start the [client -> framework] message stream accept process\n\tsid: %d, pipe name: %s", ns->id, cts_pipe_name.c_str());
             cts_pipe->connect(cts_pipe_name.c_str(), intprc::named_pipe::create_option::open_existing, intprc::named_pipe::data_transfer_mode::iomode_message, protocol::comm::pipe_client_timeout);

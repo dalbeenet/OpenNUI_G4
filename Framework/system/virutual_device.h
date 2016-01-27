@@ -3,6 +3,7 @@
 
 #include <system/sysbase.h>
 #include <system/exceptions.h>
+#include <opennui/service/shared_buffer.h>
 #include <string>
 #include <memory>
 
@@ -25,6 +26,9 @@ namespace sys {
 
 class virtual_device
 {
+    virtual_device() = delete;
+    DISALLOW_COPY_AND_ASSIGN(virtual_device);
+    DISALLOW_MOVE_AND_ASSIGN(virtual_device);
     using module_ptr = opennui_device*;
 public:
 #if OPENNUI_PLATFORM_WINDOWS
@@ -40,11 +44,8 @@ public:
     
     // constructors
     virtual_device(const char* module_path) throw(...);
-    virtual_device(virtual_device&& other);
     // destructor
     ~virtual_device();
-    // move assignment operator
-    virtual_device& operator=(virtual_device&& other);
     
     inline const key_t key()
     {
@@ -62,20 +63,31 @@ public:
     {
         return _native;
     }
+    inline shared_buffer::shared_ptr color_frame_buffer()
+    {
+        return _color_frame_buffer;
+    }
+    inline shared_buffer::shared_ptr depth_frame_buffer()
+    {
+        return _depth_frame_buffer;
+    }
+    inline shared_buffer::shared_ptr body_frame_buffer()
+    {
+        return _body_frame_buffer;
+    }
 
 private:
     void _open(const char* module_path) throw(...);
     void _close() __noexcept;
-
-    virtual_device() = delete;
-    virtual_device(const virtual_device& other) = delete;
-    virtual_device& operator=(const virtual_device& other) = delete;
 
 private:
     key_t _key;
     module_ptr _module;
     ::std::string _name;
     native_handle _native;
+    shared_buffer::shared_ptr _color_frame_buffer;
+    shared_buffer::shared_ptr _depth_frame_buffer;
+    shared_buffer::shared_ptr _body_frame_buffer;
     nuidata::image::image_format _color_frame_format;
     nuidata::image::image_format _depth_frame_format;
     nuidata::tracking::body::tracking_info _body_tracking_info;

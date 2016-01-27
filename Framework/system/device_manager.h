@@ -22,7 +22,7 @@ private:
 class device_manager
 {
 public:
-    ~device_manager() = default;
+    ~device_manager();
 private:
     static device_manager& _get_instance();
     device_manager() = default;
