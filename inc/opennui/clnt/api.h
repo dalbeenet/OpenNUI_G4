@@ -18,6 +18,8 @@ shared_buffer::shared_ptr __stdcall temp_get_depth_buffer();
 
 void __stdcall temp_acquire_kinect2_color_frame(shared_buffer::shared_ptr sbuf, unsigned char* dst);
 
+void __stdcall temp_acquire_kinect2_depth_frame(shared_buffer::shared_ptr sbuf, unsigned char* dst);
+
 } // !namespace api
 
 } // !namespace clnt

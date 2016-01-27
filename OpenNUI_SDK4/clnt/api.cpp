@@ -45,6 +45,17 @@ void __stdcall temp_acquire_kinect2_color_frame(shared_buffer::shared_ptr sbuf, 
     logger::system_log("read a color image from %s, idx: %d", sbuf->get_name(), readable.second);
 }
 
+void __stdcall temp_acquire_kinect2_depth_frame(shared_buffer::shared_ptr sbuf, unsigned char* dst)
+{
+    static uint32_t ts = 0;
+    auto readable = sbuf->get_readable_data_address(sbuf->extension_next_read_idx, ts);
+    ts = *sbuf->get_specific_timestamp_address(readable.second);
+    sbuf->unlock(readable.second);
+    ++sbuf->extension_next_read_idx %= sbuf->block_count;
+    memmove(dst, readable.first, 512 * 424 * 2);
+    logger::system_log("read a depth image from %s, idx: %d", sbuf->get_name(), readable.second);
+}
+
 }
 
 }
