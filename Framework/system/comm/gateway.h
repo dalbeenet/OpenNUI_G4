@@ -80,7 +80,7 @@ private:
     class query_processing
     {
     public:
-        static void __stdcall handshake(session::shared_ptr& session, protocol::comm::message copied_msg) __noexcept;
+        static void __stdcall handshake(session::shared_ptr session, protocol::comm::message copied_msg) __noexcept;
     };
 private:
     server_t _native_server;

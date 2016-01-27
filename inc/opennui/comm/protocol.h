@@ -26,8 +26,8 @@ Enumeration(client_type, 250,
             web);
 
 const size_t pipe_io_buffer_size = 1024;
-const size_t pipe_server_timeout = 5000;
-const size_t pipe_client_timeout = 3000;
+const unsigned long pipe_server_timeout = 5000;
+const unsigned long pipe_client_timeout = 5000;
 
 #pragma pack(push, 1)
 struct message_header

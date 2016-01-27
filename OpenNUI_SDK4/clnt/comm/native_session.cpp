@@ -105,7 +105,7 @@ native_session::shared_ptr connect_to_local_framework() throw(...)
 
             std::string stc_pipe_name(pipe_name_base);
             stc_pipe_name.append("_stc");
-            
+
             logger::system_log("Start the [client -> framework] message stream accept process\n\tsid: %d, pipe name: %s", ns->id, cts_pipe_name.c_str());
             cts_pipe->connect(cts_pipe_name.c_str(), intprc::named_pipe::create_option::open_existing, intprc::named_pipe::data_transfer_mode::iomode_message, protocol::comm::pipe_client_timeout);
             logger::system_log("Succeed to [client -> framework] message stream accept process\n\tsid: %d, pipe name: %s", ns->id, cts_pipe_name.c_str());

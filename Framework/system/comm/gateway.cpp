@@ -295,7 +295,12 @@ void __stdcall gateway::_async_query_proc_launcher(session::shared_ptr& session)
     {
     case opcode_t::handshake_hello:
     {
-        scheduler.request(::vee::make_delegate<OPENNUI_SYSTEM_TASK_SIG>(::std::bind(query_processing::handshake, session, session->msgbuf_in)));
+        ::std::thread handshake_thread([session]() -> void
+        {
+            gateway::query_processing::handshake(session, session->msgbuf_in);
+        });
+        handshake_thread.detach();
+        //scheduler.request(::vee::make_delegate<OPENNUI_SYSTEM_TASK_SIG>(::std::bind(query_processing::handshake, session, session->msgbuf_in)));
         break;
     }
     //case protocol::comm::opcode_t::
@@ -304,7 +309,7 @@ void __stdcall gateway::_async_query_proc_launcher(session::shared_ptr& session)
     }
 }
 
-void __stdcall gateway::query_processing::handshake(session::shared_ptr& session, protocol::comm::message copied_msg) __noexcept
+void __stdcall gateway::query_processing::handshake(session::shared_ptr session, protocol::comm::message copied_msg) __noexcept
 {
     using namespace protocol::comm;
     message_header& header_in = copied_msg.header;
@@ -382,6 +387,8 @@ void __stdcall gateway::query_processing::handshake(session::shared_ptr& session
                 return false;
             }
         });
+
+        ::std::this_thread::sleep_for(::std::chrono::milliseconds::duration(1000));
 
         {
             header_out.opcode = opcode_t::handshake_ack;
