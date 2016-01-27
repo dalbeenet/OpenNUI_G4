@@ -85,6 +85,22 @@ public:
     }
 };
 
+class unsupported_client_type: public protocol_mismatch
+{
+    char _desc[256];
+public:
+    explicit unsupported_client_type(int32_t type_id);
+    virtual const char* to_string()
+    {
+        return this->what();
+    }
+    inline const char* what()
+    {
+        return _desc;
+    }
+    int32_t block_size;
+};
+
 } // !namespace exceptions
 
 } // !namespace protocol

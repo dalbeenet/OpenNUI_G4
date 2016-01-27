@@ -1,6 +1,10 @@
 #include <opennui/exceptions.h>
+#include <system/sysbase.h>
 #include <system/comm/gateway.h>
 #include <system/logger.h>
+#include <vee/interprocess/pipe.h>
+#include <thread>
+#include <future>
 
 namespace opennui {
 
@@ -21,7 +25,8 @@ bytes_transferred_in(0)
 
 session::session(session&& other):
 keep_alive_stream(::std::move(other.keep_alive_stream)),
-message_stream(::std::move(other.message_stream)),
+cts_msg_stream(::std::move(other.cts_msg_stream)),
+stc_msg_stream(::std::move(other.stc_msg_stream)),
 state(::std::move(other.state)),
 type(::std::move(other.type)),
 id(::std::move(other.id)),
@@ -35,7 +40,8 @@ buffer_out(::std::move(other.buffer_out))
 session& session::operator=(session&& rhs)
 {
     keep_alive_stream = ::std::move(rhs.keep_alive_stream);
-    message_stream = ::std::move(rhs.message_stream);
+    cts_msg_stream = ::std::move(rhs.cts_msg_stream);
+    stc_msg_stream = ::std::move(rhs.stc_msg_stream);
     state = ::std::move(rhs.state);
     type = ::std::move(rhs.type);
     id = ::std::move(rhs.id);
@@ -109,7 +115,7 @@ void __stdcall gateway::_on_client_connected(server_t server, server_type type,:
 {
     if (operation_result.is_success)
     {
-        session::shared_ptr s = ::std::make_shared<session>(stream, _generate_sid());
+        session::shared_ptr s = ::std::make_shared<session>(::std::static_pointer_cast<::vee::io::stream>(stream), _generate_sid());
         logger::system_log("new %s client(sid: %d) connected, start the handshake process soon!", type.to_string(), s->id);
         s->switching_state(session::state_t::read_header);
         stream->async_read_some(s->buffer_in.data(), s->buffer_in.size(), ::std::bind(_on_data_received, s, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
@@ -150,11 +156,37 @@ void __stdcall gateway::_on_data_received(session::shared_ptr session, ::vee::io
         {
             if (io_result.bytes_transferred != 0)
             {
-                logger::system_error_log("client(sid: %d) disconnected, %d bytes of data loss", session->id, io_result.bytes_transferred);
+                logger::system_error_log("stream read failed, client(sid: %d) disconnected, %d bytes of data loss", session->id, io_result.bytes_transferred);
             }
             else
             {
-                logger::system_log("client(sid: %d) disconnected!", session->id);
+                logger::system_log("stream read failed, client(sid: %d) disconnected!", session->id);
+            }
+        }
+    }
+}
+
+void __stdcall gateway::_on_data_sent(session::shared_ptr session, ::vee::io::io_result& io_result)
+{
+    if (io_result.is_success)
+    {
+        logger::system_log("message sent to client(sid: %d) \n\topcode: %s\n\tblock size: %d\n\tmessage id: %d",
+                           session->id,
+                           session->msgbuf_out.header.opcode.to_string(),
+                           session->msgbuf_out.header.block_size,
+                           session->msgbuf_out.header.message_id);
+    }
+    else
+    {
+        if (io_result.eof)
+        {
+            if (io_result.bytes_transferred != 0)
+            {
+                logger::system_error_log("stream write failed, client(sid: %d) disconnected, %d bytes of data loss", session->id, io_result.bytes_transferred);
+            }
+            else
+            {
+                logger::system_log("stream write failed, client(sid: %d) disconnected!", session->id);
             }
         }
     }
@@ -225,8 +257,15 @@ void __stdcall gateway::_data_processing(session::shared_ptr& session, ::vee::io
                            session->msgbuf_in.header.opcode.to_string(),
                            session->msgbuf_in.header.block_size,
                            session->msgbuf_in.header.message_id);
-        
-        _query_processing(session);
+       
+        try
+        {
+            _async_query_proc_launcher(session);
+        }
+        catch (::vee::exception& e)
+        {
+            logger::system_error_log("An error occured to Launch async query processing\n\tdetail: %s", e.to_string());
+        }
 
         if (excess_quantity >= 0)
         {
@@ -246,20 +285,134 @@ uint32_t gateway::_generate_sid()
     return sid++;
 }
 
-void __stdcall gateway::_query_processing(session::shared_ptr& session) throw(...)
+void __stdcall gateway::_async_query_proc_launcher(session::shared_ptr& session) throw(...)
 {
-    protocol::comm::message_header& header = session->msgbuf_in.header;
-    unsigned char* data = session->msgbuf_in.data.data();
-    switch (header.opcode.enum_form())
+    using namespace protocol::comm;
+    message_header& header_in = session->msgbuf_in.header;
+    //unsigned char* data_in = session->msgbuf_in.data.data();
+    
+    switch (header_in.opcode.enum_form())
     {
-    case protocol::comm::opcode_t::handshake_hello:
+    case opcode_t::handshake_hello:
     {
-        if (header.block_size < sizeof(uint32_t))
-            throw protocol::exceptions::block_size_too_small(header.block_size);
-        memmove(&session->type, data, sizeof(uint32_t));
+        scheduler.request(::vee::make_delegate<OPENNUI_SYSTEM_TASK_SIG>(::std::bind(query_processing::handshake, session, session->msgbuf_in)));
         break;
     }
     //case protocol::comm::opcode_t::
+    default:
+        throw protocol::exceptions::invalid_opcode(header_in.opcode.to_uint32());
+    }
+}
+
+void __stdcall gateway::query_processing::handshake(session::shared_ptr& session, protocol::comm::message copied_msg) __noexcept
+{
+    using namespace protocol::comm;
+    message_header& header_in = copied_msg.header;
+    unsigned char* data_in = copied_msg.data.data();
+    message_header& header_out = session->msgbuf_out.header;
+    unsigned char* data_out = session->msgbuf_out.data.data();
+
+    // Parse the data from client
+    if (header_in.block_size < sizeof(uint32_t))
+    {
+        auto e = protocol::exceptions::block_size_too_small(header_in.block_size);
+        logger::system_error_log("An error occuerd in the %s\t\ndetail: %s", __FUNCTION__, e.to_string());
+    }
+
+    client_type clnt_t = client_type::null;
+    memmove(&clnt_t, data_in, sizeof(client_type));
+    switch (clnt_t.enum_form())
+    {
+    case client_type::native:
+    case client_type::web:
+        session->type = clnt_t;
+        break;
+    default:
+    {
+        auto e = protocol::exceptions::unsupported_client_type(clnt_t.to_int32());
+        logger::system_error_log("An error occuerd in the %s\t\ndetail: %s", __FUNCTION__, e.to_string());
+    }
+    }
+
+    // Do the spadework for message stream connection
+    if (session->type == client_type::native)
+    {
+        auto cts_pipe_server = vee::interprocess::windows::create_named_pipe_server();
+        auto stc_pipe_server = vee::interprocess::windows::create_named_pipe_server();
+        using data_transfer_mode = vee::interprocess::named_pipe::data_transfer_mode;
+        char pipe_name[512] = { 0, };
+        sprintf_s(pipe_name, "\\\\.\\pipe\\opennui-g4-msgpipe-%d", session->id);
+
+        session::stream_t cts_msg_stream;
+        session::stream_t stc_msg_stream;
+
+        // Launch async task
+        auto cts_connection = std::async(std::launch::async, [&]() -> bool // CTS connection
+        {
+            std::string cts_pipe_name(pipe_name);
+            cts_pipe_name.append("-cts");
+            logger::system_log("Start the [client -> framework] message stream accept process\n\tsid: %d, pipe name: %s", session->id, cts_pipe_name.c_str());
+            try
+            {
+                cts_msg_stream = cts_pipe_server->accept(cts_pipe_name.data(), data_transfer_mode::iomode_message, protocol::comm::pipe_io_buffer_size, protocol::comm::pipe_io_buffer_size, 3000);
+                logger::system_log("Succeed to [client -> framework] message stream accept process\n\tsid: %d, pipe name : %s", session->id, cts_pipe_name.c_str());
+                return true;
+            }
+            catch (::vee::exception& e)
+            {
+                logger::system_error_log("An error occured from [client -> framework] message stream accept process\n\tsid: %d, pipe name : %s\n\tdetail: %s", session->id, cts_pipe_name.c_str(), e.to_string());
+                return false;
+            }
+        });
+
+        auto stc_connection = std::async(std::launch::async, [&]() -> bool // STC connection
+        {
+            std::string stc_pipe_name(pipe_name);
+            stc_pipe_name.append("-stc");
+            logger::system_log("Start the [framework -> client] message stream accept process\n\tsid: %d, pipe name: %s", session->id, stc_pipe_name.c_str());
+            try
+            {
+                stc_msg_stream = cts_pipe_server->accept(stc_pipe_name.data(), data_transfer_mode::iomode_message, protocol::comm::pipe_io_buffer_size, protocol::comm::pipe_io_buffer_size, 3000);
+                logger::system_log("Succeed to [framework -> client] message stream accept process\n\tsid: %d, pipe name : %s", session->id, stc_pipe_name.c_str());
+                return true;
+            }
+            catch (::vee::exception& e)
+            {
+                logger::system_error_log("An error occured from [framework -> client] message stream accept process\n\tsid: %d, pipe name : %s\n\tdetail: %s", session->id, stc_pipe_name.c_str(), e.to_string());
+                return false;
+            }
+        });
+
+        {
+            header_out.opcode = opcode_t::handshake_ack;
+            header_out.block_size = sizeof(session->id);
+            header_out.message_id = 1;
+            memmove(data_out, &session->id, sizeof(session->id));
+            uint32_t szmsg = session->msgbuf_out.to_binary(session->buffer_out.data());
+            session->keep_alive_stream->async_write_some(session->buffer_out.data(), szmsg, ::std::bind(_on_data_sent, session, ::std::placeholders::_1));
+        }
+       
+        bool cts_result = cts_connection.get();
+        bool stc_result = stc_connection.get();
+        if (!cts_result || !stc_result)
+        {
+            logger::system_error_log("Message stream connection failed(sid: %d), cts: %s / stc: %s",
+                                                         session->id, 
+                                                         (cts_result ? "OK" : "NA"),
+                                                         (stc_result ? "OK" : "NA"));
+        }
+
+        session->cts_msg_stream = cts_msg_stream;
+        session->stc_msg_stream = stc_msg_stream;
+        logger::system_log("Handshake success! sid: %d", session->id);
+    }
+    else if (session->type == client_type::web)
+    {
+        logger::system_error_log("Unsupported client type (TODO)");
+    }
+    else
+    {
+        logger::system_error_log("Bad error: invalid client type");
     }
 }
 

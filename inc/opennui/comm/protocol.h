@@ -17,12 +17,15 @@ Enumeration(comm_port, 12835,
 Enumeration(opcode_t, 500,
             null,
             handshake_hello,
+            handshake_ack,
             end_of_record);
 
 Enumeration(client_type, 250,
             null,
             native,
             web);
+
+const size_t pipe_io_buffer_size = 4096;
 
 #pragma pack(push, 1)
 struct message_header

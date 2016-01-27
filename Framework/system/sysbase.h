@@ -34,9 +34,11 @@ namespace opennui {
 
 namespace sys {
 
-#define OPENNUI_SYSTEM_TASK_ARGS uint32_t /*task_id*/
+#define OPENNUI_SYSTEM_TASK_ARGS 
 #define OPENNUI_SYSTEM_TASK_SIG  void(OPENNUI_SYSTEM_TASK_ARGS)
 extern ::vee::scheduler<OPENNUI_SYSTEM_TASK_SIG> scheduler;
+
+uint32_t generate_taskid();
 
 } // !namespace sys
 

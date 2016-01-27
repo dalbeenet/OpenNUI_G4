@@ -18,7 +18,7 @@ class session
 public:
     using shared_ptr = ::std::shared_ptr<session>;
     using unqiue_ptr = ::std::unique_ptr<session>;
-    using stream_t = ::vee::net::net_stream::shared_ptr;
+    using stream_t = ::std::shared_ptr<::vee::io::stream>;
     Enumeration(state_t, 0,
                 init,
                 read_header,
@@ -43,7 +43,8 @@ public:
 
 public:
     stream_t keep_alive_stream;
-    stream_t message_stream;
+    stream_t cts_msg_stream;
+    stream_t stc_msg_stream;
     state_t  state;
     uint32_t id;
     protocol::comm::client_type type;
@@ -71,10 +72,16 @@ private:
     gateway();
     static void __stdcall _on_client_connected(server_t server, server_type type,::vee::net::op_result&/*operation result*/, ::vee::net::net_stream::shared_ptr/*stream*/);
     static void __stdcall _on_data_received(session::shared_ptr session, ::vee::io::io_result& io_result, unsigned char* const recieve_buffer_address, size_t recieve_buffer_size);
+    static void __stdcall _on_data_sent(session::shared_ptr session, ::vee::io::io_result& io_result);
     static void __stdcall _header_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
     static void __stdcall _data_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
     static uint32_t __stdcall _generate_sid();
-    static void __stdcall _query_processing(session::shared_ptr& session) throw(...);
+    static void __stdcall _async_query_proc_launcher(session::shared_ptr& session) throw(...);
+    class query_processing
+    {
+    public:
+        static void __stdcall handshake(session::shared_ptr& session, protocol::comm::message copied_msg) __noexcept;
+    };
 private:
     server_t _native_server;
     server_t _web_server;

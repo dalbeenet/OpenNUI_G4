@@ -35,6 +35,11 @@ handshake_failed::handshake_failed(const char* additional_info, ...)
     va_end(ap);
 }
 
+unsupported_client_type::unsupported_client_type(int32_t type_id)
+{
+    sprintf_s(_desc, "unsupported client type (type_id: %d)", type_id);
+}
+
 } // !namespace exceptions
 
 } // !namespace protocol

@@ -21,9 +21,6 @@
     <ClInclude Include="..\inc\opennui\nuidata.h">
       <Filter>opennui</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\opennui\opennui.h">
-      <Filter>opennui</Filter>
-    </ClInclude>
     <ClInclude Include="..\inc\opennui\version.h">
       <Filter>opennui</Filter>
     </ClInclude>
@@ -42,6 +39,9 @@
     <ClInclude Include="..\inc\opennui\clnt\comm\session.h">
       <Filter>opennui\clnt\comm</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\opennui\clnt\logger.h">
+      <Filter>opennui\clnt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sdk4.cpp" />
@@ -51,6 +51,9 @@
     <ClCompile Include="exceptions.cpp" />
     <ClCompile Include="clnt\comm\session.cpp">
       <Filter>opennui\clnt\comm</Filter>
+    </ClCompile>
+    <ClCompile Include="clnt\logger.cpp">
+      <Filter>opennui\clnt</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

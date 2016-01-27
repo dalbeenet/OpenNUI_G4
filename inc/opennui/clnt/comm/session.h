@@ -10,19 +10,18 @@ namespace clnt {
 
 namespace comm {
 
-class session
+class native_session
 {
-    DISALLOW_COPY_AND_ASSIGN(session);
-    DISALLOW_MOVE_AND_ASSIGN(session);
-    session() = delete;
+    DISALLOW_COPY_AND_ASSIGN(native_session);
+    DISALLOW_MOVE_AND_ASSIGN(native_session);
+    native_session() = delete;
 public:
-    using shared_ptr = ::std::shared_ptr<session>;
-    using unqiue_ptr = ::std::unique_ptr<session>;
+    using shared_ptr = ::std::shared_ptr<native_session>;
+    using unqiue_ptr = ::std::unique_ptr<native_session>;
     using stream_t = ::vee::net::net_stream::shared_ptr;
-    session(stream_t _stream);
+    native_session(stream_t _stream);
     inline void clear_msgbuf_in()
     {
-        bytes_transferred_in = 0;
         msgbuf_in.clear();
     }
     inline void clear_msgbuf_out()
@@ -35,12 +34,11 @@ public:
     uint32_t id;
     protocol::comm::message msgbuf_in;
     protocol::comm::message msgbuf_out;
-    size_t   bytes_transferred_in;
     ::std::array<unsigned char, sizeof(protocol::comm::message)> buffer_in;
     ::std::array<unsigned char, sizeof(protocol::comm::message)> buffer_out;
 };
 
-session::shared_ptr connect_to_local_framework() throw(...);
+native_session::shared_ptr connect_to_local_framework() throw(...);
 
 } // !namespace comm
 
