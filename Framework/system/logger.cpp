@@ -5,13 +5,14 @@
 #ifdef VEE_PLATFORM_WINDOWS
 #include <Windows.h>
 #endif // !VEE_PLATFORM_WINDOWS
+#include <vee/concurrency/mutex.h>
 #include <mutex>
 
 namespace opennui {
 
 namespace sys {
 
-::std::mutex logger_lock;
+::vee::spin_lock logger_lock;
 
 #ifdef VEE_PLATFORM_WINDOWS
 WORD get_console_textcolor()
@@ -56,40 +57,46 @@ WORD set_console_color(WORD color)
 
 void logger::system_log(const char* format, ...)
 {
-    ::std::lock_guard<::std::mutex> guard(logger_lock);
     std::array<char, 2048> buffer;
     buffer.fill(0);
     va_list ap;
     va_start(ap, format);
     vsprintf_s(buffer.data(), buffer.size(), format, ap);
-    printf("log> %s\n", buffer.data());
+    {
+        ::std::lock_guard<::vee::spin_lock> guard(logger_lock);
+        fprintf(stdout, "log> %s\n", buffer.data());
+    }
     va_end(ap);
 }
 
 void logger::system_log(std::string& s)
 {
-    ::std::lock_guard<::std::mutex> guard(logger_lock);
-    printf("log> %s\n", s.c_str());
+    ::std::lock_guard<::vee::spin_lock> guard(logger_lock);
+    fprintf(stdout, "log> %s\n", s.c_str());
 }
 
 void logger::system_error_log(const char* format, ...)
 {
-    ::std::lock_guard<::std::mutex> guard(logger_lock);
-    WORD old = set_console_color(12);
     std::array<char, 2048> buffer;
     buffer.fill(0);
     va_list ap;
     va_start(ap, format);
     vsprintf_s(buffer.data(), buffer.size(), format, ap);
-    printf("err> %s\n", buffer.data());
+    {
+        ::std::lock_guard<::vee::spin_lock> guard(logger_lock);
+        WORD old = set_console_color(12);
+        fprintf(stdout, "err> %s\n", buffer.data());
+        set_console_color(old);
+    }
     va_end(ap);
-    set_console_color(old);
 }
 
 void logger::system_error_log(std::string& s)
 {
-    ::std::lock_guard<::std::mutex> guard(logger_lock);
-    printf("err> %s\n", s.c_str());
+    ::std::lock_guard<::vee::spin_lock> guard(logger_lock);
+    WORD old = set_console_color(12);
+    fprintf(stdout, "err> %s\n", s.c_str());
+    set_console_color(old);
 }
 
 } // !namespace sys

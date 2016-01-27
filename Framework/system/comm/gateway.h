@@ -73,10 +73,10 @@ private:
     static void __stdcall _on_client_connected(server_t server, server_type type,::vee::net::op_result&/*operation result*/, ::vee::net::net_stream::shared_ptr/*stream*/);
     static void __stdcall _on_data_received(session::shared_ptr session, ::vee::io::io_result& io_result, unsigned char* const recieve_buffer_address, size_t recieve_buffer_size);
     static void __stdcall _on_data_sent(session::shared_ptr session, ::vee::io::io_result& io_result);
-    static void __stdcall _header_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
-    static void __stdcall _data_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
+    static void __stdcall _header_processing(session::shared_ptr session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
+    static void __stdcall _data_processing(session::shared_ptr session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
     static uint32_t __stdcall _generate_sid();
-    static void __stdcall _async_query_proc_launcher(session::shared_ptr& session) throw(...);
+    static void __stdcall _async_query_proc_launcher(session::shared_ptr session) throw(...);
     class query_processing
     {
     public:

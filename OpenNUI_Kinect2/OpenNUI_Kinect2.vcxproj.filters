@@ -3,4 +3,7 @@
   <ItemGroup>
     <ClCompile Include="OpenNUI_Kinect2.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="opennui_exports.def" />
+  </ItemGroup>
 </Project>

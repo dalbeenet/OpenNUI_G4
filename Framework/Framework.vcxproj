@@ -88,11 +88,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="device_management.cpp" />
     <ClCompile Include="fwmain.cpp" />
     <ClCompile Include="system\comm\gateway.cpp" />
+    <ClCompile Include="system\device_management.cpp" />
     <ClCompile Include="system\exceptions.cpp" />
     <ClCompile Include="system\logger.cpp" />
+    <ClCompile Include="system\shared_buffer.cpp" />
     <ClCompile Include="system\sysobject.cpp" />
     <ClCompile Include="system\virtual_device.cpp" />
   </ItemGroup>
@@ -101,6 +102,7 @@
     <ClInclude Include="system\device_manager.h" />
     <ClInclude Include="system\exceptions.h" />
     <ClInclude Include="system\logger.h" />
+    <ClInclude Include="system\shared_buffer.h" />
     <ClInclude Include="system\sysbase.h" />
     <ClInclude Include="system\virutual_device.h" />
   </ItemGroup>

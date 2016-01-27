@@ -160,7 +160,7 @@ void __stdcall gateway::_on_data_received(session::shared_ptr session, ::vee::io
             }
             else
             {
-                logger::system_log("Stream read failed, client(sid: %d) disconnected!", session->id);
+                logger::system_error_log("Stream read failed, client(sid: %d) disconnected!", session->id);
             }
         }
     }
@@ -186,13 +186,13 @@ void __stdcall gateway::_on_data_sent(session::shared_ptr session, ::vee::io::io
             }
             else
             {
-                logger::system_log("Stream write failed, client(sid: %d) disconnected!", session->id);
+                logger::system_error_log("Stream write failed, client(sid: %d) disconnected!", session->id);
             }
         }
     }
 }
 
-void __stdcall gateway::_header_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size)
+void __stdcall gateway::_header_processing(session::shared_ptr session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size)
 {
     size_t remaining_header_size = sizeof(protocol::comm::message_header) - session->bytes_transferred_in;
     if (io_result.bytes_transferred < remaining_header_size)
@@ -236,7 +236,7 @@ void __stdcall gateway::_header_processing(session::shared_ptr& session, ::vee::
     }
 }
 
-void __stdcall gateway::_data_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size)
+void __stdcall gateway::_data_processing(session::shared_ptr session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size)
 {
     size_t data_transferred = session->bytes_transferred_in - sizeof(protocol::comm::message_header);
     size_t remaining_data_size = session->msgbuf_in.header.block_size - data_transferred;
@@ -285,7 +285,7 @@ uint32_t gateway::_generate_sid()
     return sid++;
 }
 
-void __stdcall gateway::_async_query_proc_launcher(session::shared_ptr& session) throw(...)
+void __stdcall gateway::_async_query_proc_launcher(session::shared_ptr session) throw(...)
 {
     using namespace protocol::comm;
     message_header& header_in = session->msgbuf_in.header;
@@ -295,12 +295,16 @@ void __stdcall gateway::_async_query_proc_launcher(session::shared_ptr& session)
     {
     case opcode_t::handshake_hello:
     {
-        ::std::thread handshake_thread([session]() -> void
-        {
-            gateway::query_processing::handshake(session, session->msgbuf_in);
-        });
+        ::std::thread handshake_thread(gateway::query_processing::handshake, session, session->msgbuf_in);
         handshake_thread.detach();
         //scheduler.request(::vee::make_delegate<OPENNUI_SYSTEM_TASK_SIG>(::std::bind(query_processing::handshake, session, session->msgbuf_in)));
+        /*auto thread_launcher = [](session::shared_ptr session, protocol::comm::message copied_msg)->void
+        {
+        logger::system_log("Launch handshake thread!");
+        ::std::thread handshake_thread(gateway::query_processing::handshake, session, copied_msg);
+        handshake_thread.detach();
+        };*/
+        //scheduler.request(::vee::make_delegate<OPENNUI_SYSTEM_TASK_SIG>(::std::bind(thread_launcher, session, session->msgbuf_in)));
         break;
     }
     //case protocol::comm::opcode_t::
@@ -398,7 +402,7 @@ void __stdcall gateway::query_processing::handshake(session::shared_ptr session,
             uint32_t szmsg = session->msgbuf_out.to_binary(session->buffer_out.data());
             session->keep_alive_stream->async_write_some(session->buffer_out.data(), szmsg, ::std::bind(_on_data_sent, session, ::std::placeholders::_1));
         }
-       
+
         bool cts_result = cts_connection.get();
         bool stc_result = stc_connection.get();
         if (!cts_result || !stc_result)
