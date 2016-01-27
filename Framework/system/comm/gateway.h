@@ -23,10 +23,6 @@ public:
                 init,
                 read_header,
                 read_data);
-    Enumeration(clnttype, 0,
-                null,
-                native,
-                web);
     session(stream_t _stream, uint32_t _id);
     session(session&& other);
     session& operator=(session&& rhs);
@@ -46,10 +42,11 @@ public:
     }
 
 public:
-    stream_t stream;
+    stream_t keep_alive_stream;
+    stream_t message_stream;
     state_t  state;
-    clnttype type;
     uint32_t id;
+    protocol::comm::client_type type;
     protocol::comm::message msgbuf_in;
     protocol::comm::message msgbuf_out;
     size_t   bytes_transferred_in;
@@ -68,9 +65,7 @@ public:
     static void __stdcall close();
 
 private:
-    Enumeration(server_type, 0,
-                native,
-                web);
+    using server_type = protocol::comm::client_type;
     using server_t = ::vee::net::net_server::shared_ptr;
     static gateway& _get_instance();
     gateway();
@@ -79,7 +74,7 @@ private:
     static void __stdcall _header_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
     static void __stdcall _data_processing(session::shared_ptr& session, ::vee::io::io_result& io_result, unsigned char* const buffer, size_t buffer_size);
     static uint32_t __stdcall _generate_sid();
-    static void __stdcall _query_processing(session::shared_ptr& session);
+    static void __stdcall _query_processing(session::shared_ptr& session) throw(...);
 private:
     server_t _native_server;
     server_t _web_server;

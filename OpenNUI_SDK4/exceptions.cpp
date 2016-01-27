@@ -19,6 +19,11 @@ invalid_block_size::invalid_block_size(size_t _block_size)
     sprintf_s(_desc, "invalid block size (block size: %d)", _block_size);
 }
 
+block_size_too_small::block_size_too_small(size_t _block_size)
+{
+    sprintf_s(_desc, "invalid block size (block size: %d)", _block_size);
+}
+
 handshake_failed::handshake_failed(const char* additional_info, ...)
 {
     std::array<char, 1024> buffer;

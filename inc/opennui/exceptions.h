@@ -54,6 +54,22 @@ public:
     size_t block_size;
 };
 
+class block_size_too_small: public protocol_mismatch
+{
+    char _desc[256];
+public:
+    explicit block_size_too_small(size_t _block_size);
+    virtual const char* to_string()
+    {
+        return this->what();
+    }
+    inline const char* what()
+    {
+        return _desc;
+    }
+    size_t block_size;
+};
+
 class handshake_failed: public protocol_mismatch
 {
     char _desc[1024];

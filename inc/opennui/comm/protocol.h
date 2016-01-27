@@ -19,6 +19,11 @@ Enumeration(opcode_t, 500,
             handshake_hello,
             end_of_record);
 
+Enumeration(client_type, 250,
+            null,
+            native,
+            web);
+
 #pragma pack(push, 1)
 struct message_header
 {

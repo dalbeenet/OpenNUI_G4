@@ -1,3 +1,4 @@
+#include <opennui/exceptions.h>
 #include <system/comm/gateway.h>
 #include <system/logger.h>
 
@@ -8,9 +9,9 @@ namespace sys {
 namespace comm {
 
 session::session(stream_t _stream, uint32_t _id):
-stream(_stream),
+keep_alive_stream(_stream),
 state(state_t::init),
-type(clnttype::null),
+type(protocol::comm::client_type::null),
 id(_id),
 bytes_transferred_in(0)
 {
@@ -19,7 +20,8 @@ bytes_transferred_in(0)
 }
 
 session::session(session&& other):
-stream(::std::move(other.stream)),
+keep_alive_stream(::std::move(other.keep_alive_stream)),
+message_stream(::std::move(other.message_stream)),
 state(::std::move(other.state)),
 type(::std::move(other.type)),
 id(::std::move(other.id)),
@@ -32,7 +34,8 @@ buffer_out(::std::move(other.buffer_out))
 
 session& session::operator=(session&& rhs)
 {
-    stream = ::std::move(rhs.stream);
+    keep_alive_stream = ::std::move(rhs.keep_alive_stream);
+    message_stream = ::std::move(rhs.message_stream);
     state = ::std::move(rhs.state);
     type = ::std::move(rhs.type);
     id = ::std::move(rhs.id);
@@ -164,7 +167,7 @@ void __stdcall gateway::_header_processing(session::shared_ptr& session, ::vee::
     {
         memmove(&session->msgbuf_in.header + session->bytes_transferred_in, buffer, io_result.bytes_transferred);
         session->bytes_transferred_in += io_result.bytes_transferred;
-        session->stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
+        session->keep_alive_stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
     }
     else
     {
@@ -195,7 +198,7 @@ void __stdcall gateway::_header_processing(session::shared_ptr& session, ::vee::
         }
         else
         {
-            session->stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
+            session->keep_alive_stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
         }
         return;
     }
@@ -209,14 +212,13 @@ void __stdcall gateway::_data_processing(session::shared_ptr& session, ::vee::io
     {
         memmove(&session->msgbuf_in.data + data_transferred, buffer, io_result.bytes_transferred);
         session->bytes_transferred_in += io_result.bytes_transferred;
-        session->stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
+        session->keep_alive_stream->async_read_some(buffer, buffer_size, ::std::bind(_on_data_received, session, ::std::placeholders::_1, ::std::placeholders::_2, ::std::placeholders::_3));
     }
     else
     {
         size_t excess_quantity = io_result.bytes_transferred - remaining_data_size;
         memmove(&session->msgbuf_in.data, buffer, remaining_data_size);
         session->bytes_transferred_in += remaining_data_size;
-        excess_quantity -= remaining_data_size;
 
         logger::system_log("client(sid: %d) message arrived\n\topcode: %s\n\tblock size: %d\n\tmessage id: %d",
                            session->id,
@@ -244,12 +246,21 @@ uint32_t gateway::_generate_sid()
     return sid++;
 }
 
-void __stdcall gateway::_query_processing(session::shared_ptr& session)
+void __stdcall gateway::_query_processing(session::shared_ptr& session) throw(...)
 {
     protocol::comm::message_header& header = session->msgbuf_in.header;
     unsigned char* data = session->msgbuf_in.data.data();
-    logger::system_log("Enter query processing: sid: %d, opcode: %d", session->id, header.opcode);
-
+    switch (header.opcode.enum_form())
+    {
+    case protocol::comm::opcode_t::handshake_hello:
+    {
+        if (header.block_size < sizeof(uint32_t))
+            throw protocol::exceptions::block_size_too_small(header.block_size);
+        memmove(&session->type, data, sizeof(uint32_t));
+        break;
+    }
+    //case protocol::comm::opcode_t::
+    }
 }
 
 } // !namespace comm
