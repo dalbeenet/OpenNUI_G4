@@ -108,7 +108,7 @@
     <ClInclude Include="..\inc\opennui\version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="clnt\comm\session.cpp" />
+    <ClCompile Include="clnt\comm\native_session.cpp" />
     <ClCompile Include="clnt\logger.cpp" />
     <ClCompile Include="comm\protocol.cpp" />
     <ClCompile Include="exceptions.cpp" />

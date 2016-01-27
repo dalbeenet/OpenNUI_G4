@@ -28,7 +28,7 @@ namespace sys {
         auto list_modules = opennui::sys::device_loader::scan();
         for (auto& module_path : list_modules)
         {
-            logger::system_log("load module \"%s\"", module_path.c_str());
+            logger::system_log("Load module \"%s\"", module_path.c_str());
             ret.push_back(::std::make_shared<virtual_device>(module_path.c_str()));
         }
     }

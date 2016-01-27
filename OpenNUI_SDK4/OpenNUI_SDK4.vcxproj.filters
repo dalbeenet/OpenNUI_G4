@@ -49,11 +49,11 @@
       <Filter>opennui\comm</Filter>
     </ClCompile>
     <ClCompile Include="exceptions.cpp" />
-    <ClCompile Include="clnt\comm\session.cpp">
-      <Filter>opennui\clnt\comm</Filter>
-    </ClCompile>
     <ClCompile Include="clnt\logger.cpp">
       <Filter>opennui\clnt</Filter>
+    </ClCompile>
+    <ClCompile Include="clnt\comm\native_session.cpp">
+      <Filter>opennui\clnt\comm</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

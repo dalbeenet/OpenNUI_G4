@@ -25,7 +25,9 @@ Enumeration(client_type, 250,
             native,
             web);
 
-const size_t pipe_io_buffer_size = 4096;
+const size_t pipe_io_buffer_size = 1024;
+const size_t pipe_server_timeout = 5000;
+const size_t pipe_client_timeout = 3000;
 
 #pragma pack(push, 1)
 struct message_header
@@ -40,16 +42,16 @@ struct message
 {
     static const int data_section_max = 512;
     message_header header;
-    ::std::array<unsigned char, data_section_max> data;
+    ::std::array<unsigned char, data_section_max> data_section;
     inline void clear()
     {
         memset(&header, 0, sizeof(header));
-        data.fill(0);
+        data_section.fill(0);
     }
     inline uint32_t to_binary(unsigned char* dst)
     {
         memmove(dst, &header, sizeof(message_header));
-        memmove(dst + sizeof(message_header), &data, header.block_size);
+        memmove(dst + sizeof(message_header), &data_section, header.block_size);
         return sizeof(message_header) + header.block_size;
     }
 };

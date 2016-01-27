@@ -18,7 +18,7 @@ class native_session
 public:
     using shared_ptr = ::std::shared_ptr<native_session>;
     using unqiue_ptr = ::std::unique_ptr<native_session>;
-    using stream_t = ::vee::net::net_stream::shared_ptr;
+    using stream_t = ::std::shared_ptr<::vee::io::stream>;
     native_session(stream_t _stream);
     inline void clear_msgbuf_in()
     {
@@ -30,7 +30,9 @@ public:
     }
 
 public:
-    stream_t stream;
+    stream_t keep_alive_stream;
+    stream_t cts_msg_stream;
+    stream_t stc_msg_stream;
     uint32_t id;
     protocol::comm::message msgbuf_in;
     protocol::comm::message msgbuf_out;

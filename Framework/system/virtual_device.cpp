@@ -62,7 +62,7 @@ void virtual_device::_open(const char* module_path) throw(...)
     module_handle = LoadLibraryA(module_path);
     if (module_handle == NULL)
     {
-        logger::system_error_log("module load exception occured in %s (gle: %d)", __FUNCTION__, GetLastError());
+        logger::system_error_log("Module load exception occured in %s (gle: %d)", __FUNCTION__, GetLastError());
         throw exceptions::module_load_failed(GetLastError());
     }
 
