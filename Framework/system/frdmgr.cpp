@@ -13,7 +13,7 @@ frdmgr::frdmgr():
 _msg_queue(msg_queue_capacity)
 {
     _timer = ::vee::create_timer();
-    _timer->run(26, ::vee::make_delegate<void(timer_tick)>(_on_timer));
+    _timer->run(16, ::vee::make_delegate<void(timer_tick)>(_on_timer));
 }
 
 frdmgr& frdmgr::_get_instance()
@@ -77,8 +77,9 @@ void frdmgr::_on_timer(timer_tick tick)
         {
             shared_buffer::shared_ptr buffer = it.second->color_frame_buffer();
             auto writable = buffer->get_writable_data_address(buffer->extension_next_write_idx, tick);
-            *buffer->get_specific_timestamp_address(writable.second) = tick;
-            module_ptr->acquire_color_frame(writable.first);
+            bool result = module_ptr->acquire_color_frame(writable.first);
+            if (result)
+                memmove(buffer->get_specific_timestamp_address(writable.second), &tick, sizeof(uint32_t));
             buffer->unlock(writable.second);
             ++buffer->extension_next_write_idx %= buffer->block_count;
             //logger::system_log("write a color image from %s, idx: %d", it.second->name(), writable.second);
@@ -86,8 +87,9 @@ void frdmgr::_on_timer(timer_tick tick)
         {
             shared_buffer::shared_ptr buffer = it.second->depth_frame_buffer();
             auto writable = buffer->get_writable_data_address(buffer->extension_next_write_idx, tick);
-            *buffer->get_specific_timestamp_address(writable.second) = tick;
-            module_ptr->acquire_depth_frame(writable.first);
+            bool result = module_ptr->acquire_depth_frame(writable.first);
+            if (result)
+                memmove(buffer->get_specific_timestamp_address(writable.second), &tick, sizeof(uint32_t));
             buffer->unlock(writable.second);
             ++buffer->extension_next_write_idx %= buffer->block_count;
             //logger::system_log("write a depth image from %s, idx: %d", it.second->name(), writable.second);

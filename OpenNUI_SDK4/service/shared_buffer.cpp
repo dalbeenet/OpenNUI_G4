@@ -50,7 +50,7 @@ bool shared_buffer::unlock(int index)
         if (lock(ci))
         {
             timestamp_t cits = get_timestamp(ci);
-            if (cits <= ts)
+            if (cits < ts)
                 break;
             unlock(ci);
         }

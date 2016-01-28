@@ -42,25 +42,25 @@ int main()
             }
         }
         api::temp_acquire_kinect2_color_frame(hcsbuf, color_buffer);
-        for (int i = 1; i <= 40; ++i)
+        /*for (int i = 1; i <= 40; ++i)
         {
-            printf("0x%02X", (unsigned char)color_buffer[i]);
-            if (i % 10 == 0)
-                printf("\n");
-            else
-                printf(" ");
-        }
+        printf("0x%02X", (unsigned char)color_buffer[i]);
+        if (i % 10 == 0)
         printf("\n");
+        else
+        printf(" ");
+        }
+        printf("\n");*/
         api::temp_acquire_kinect2_depth_frame(hdsbuf, depth_buffer);
-        for (int i = 1; i <= 40; ++i)
+        /*for (int i = 1; i <= 40; ++i)
         {
-            printf("0x%02X", (unsigned char)depth_buffer[i]);
-            if (i % 10 == 0)
-                printf("\n");
-            else
-                printf(" ");
-        }
+        printf("0x%02X", (unsigned char)depth_buffer[i]);
+        if (i % 10 == 0)
         printf("\n");
+        else
+        printf(" ");
+        }
+        printf("\n");*/
     }
 }
 

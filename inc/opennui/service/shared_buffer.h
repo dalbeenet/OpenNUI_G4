@@ -13,7 +13,7 @@ class shared_buffer
 public:
     static const int metadata_block_size = 1024;
     using lock_t = uint32_t;
-    using timestamp_t = int32_t;
+    using timestamp_t = uint32_t;
     using shared_ptr = ::std::shared_ptr<shared_buffer>;
     using unique_ptr = ::std::unique_ptr<shared_buffer>;
     shared_buffer(const char* shm_name, size_t block_size_, size_t block_count_, uint32_t key_);
